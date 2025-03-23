@@ -1,0 +1,2 @@
+file(GLOB_RECURSE SOURCE_FILES "*.cpp")
+add_library(${LIBRARY_NAME} STATIC ${SOURCE_FILES})
