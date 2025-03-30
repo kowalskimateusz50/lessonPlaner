@@ -1,12 +1,8 @@
--------------------------- Building and compiling OpenXLSX --------------------------------------
-git clone https://github.com/troldal/OpenXLSX.git
-cd OpenXLSX
-mkdir build
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=/absolute/path/to/install
-cmake --build . --target install
+-------------------------- Building and compiling project for windows --------------------------------------
 
-/absolute/path/to/install/lib/cmake/OpenXLSX
-
-OpenXLSXConfig.cmake
-OpenXLSXConfigVersion.cmake
+rm -dr build &&
+mkdir build &&
+cd build &&
+cmake .. -DCMAKE_TOOLCHAIN_FILE=../toolchain-mingw.cmake &&
+cmake --build . &&
+cd ..

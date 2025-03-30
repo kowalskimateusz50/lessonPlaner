@@ -1,15 +1,25 @@
-//#include "OpenXLSX.hpp"
+#include <OpenXLSX.hpp>
 #include <iostream>
 
-int main() {
-  /*  OpenXLSX::XLDocument doc;
-    doc.create("example.xlsx");
-    auto wks = doc.workbook().worksheet("Sheet1");
+using namespace std;
+using namespace OpenXLSX;
 
-    wks.cell("A1").value() = "Hello, OpenXLSX!";
+int main() {
+
+    OpenXLSX::XLDocument doc;
+
+    //Create doc document
+    doc.create("example.xlsx"); 
+
+    //Create worksheet
+    XLWorksheet wks = doc.workbook().worksheet(1);
+
+    wks.cell("A1") = "Hello";
+    wks.cell("B1") = "World";
+
+    //Closing XLSX document
     doc.save();
     doc.close();
 
-    std::cout << "Plik Excel zapisany jako example.xlsx" << std::endl; */
     return 0;
 }
