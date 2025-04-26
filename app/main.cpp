@@ -4,7 +4,8 @@
 using namespace std;
 using namespace OpenXLSX;
 
-int main() {
+int main() 
+{
 
     OpenXLSX::XLDocument doc;
 

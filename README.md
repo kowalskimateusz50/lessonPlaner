@@ -6,3 +6,5 @@ cd build &&
 cmake .. -DCMAKE_TOOLCHAIN_FILE=../toolchain-mingw.cmake &&
 cmake --build . &&
 cd ..
+
+------------------------------ Class Design -------------------------------------------------------------
