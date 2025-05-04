@@ -1,7 +1,8 @@
 #include "department.h"
 
-department::department() {
-
-    name = "empty";
-    year = 0;
+department::department()
+{
+    department::year = 0;
+    department::name = "";
+    department::teacher = "";
 }
