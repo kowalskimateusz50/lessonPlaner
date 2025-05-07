@@ -1,9 +1,12 @@
  #pragma once 
 
  #include <iostream>
+ #include <OpenXLSX.hpp>
  #include <vector>
+ #include "programSettings.h"
 
 using namespace std;
+using namespace OpenXLSX;
 
 enum class availableDay 
 {

@@ -1,2 +1,2 @@
 add_subdirectory(OpenXLSX)
-target_link_libraries(${EXECUTABLE_NAME} PRIVATE OpenXLSX)
+target_link_libraries(${LIBRARY_NAME} PUBLIC OpenXLSX)
