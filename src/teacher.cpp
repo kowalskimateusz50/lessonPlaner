@@ -1,21 +1,64 @@
 #include "teacher.h"
 
-int teacher::readAvailability()
+uint teacher::teacherInitialsReadLine = 2;
+
+teacher::teacher()
+{
+    
+
+}
+
+int teacher::readAvailability(string inputFilePath)
 {
     
     OpenXLSX::XLDocument doc;
 
-    //Create doc document
-    doc.create(settings); 
+    //Open xlsx document
+    doc.open(inputFilePath); 
+    //Open worksheet
+    auto wks = doc.workbook().worksheet(1);
 
-    //Create worksheet
-    XLWorksheet wks = doc.workbook().worksheet(1);
+    //Try to find initials
+    if (findAndCheckInitials(wks))
+    {
+        cout << "\nInitials found successfully:" << endl;
+    }
+    else
+    {
+        cout << "\nInitials wasn't found:" << endl;
+        //Close XLSX document
+        doc.close();
+        return 1;
+    }
 
-    auto cell = worksheet.cell("B2"); 
+    //Read availability matrix
+     
 
-    //Closing XLSX document
+
+
+
+
+    //Close XLSX document
     doc.close();
     
+    return 0;
+}
+
+int teacher::findAndCheckInitials(const OpenXLSX::XLWorksheet& wks)
+{
+    string cellAdress = "B" + to_string(this->teacherInitialsReadLine);
+    //Read initials from file
+    auto cell = wks.cell(cellAdress);
+    string initials =  cell.value().get<string>();
+    //Check if initials are into criteria
+    if (initials.length() == 2) 
+    {
+        cout << initials << endl;
+        //Increment initials read line 
+        this->teacherInitialsReadLine += 12;
+        return 1;
+    }
+
     return 0;
 }
 

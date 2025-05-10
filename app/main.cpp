@@ -1,10 +1,9 @@
 
 #include <iostream>
-#include <OpenXLSX.hpp>
 #include "programSettings.h"
+#include "teacher.h"
 
 using namespace std;
-using namespace OpenXLSX;
 
 int main() 
 {
@@ -12,7 +11,8 @@ int main()
     programSettings settings;
     settings.readProgramSettings();
 
-    cout << "\nInput file path is: " << settings.getInputFilePath() << endl;
+    teacher firstTeacher;
+    firstTeacher.readAvailability(settings.getInputFilePath());
 
     return 0;
 }

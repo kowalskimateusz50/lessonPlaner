@@ -1,6 +1,7 @@
  #pragma once 
 
  #include <iostream>
+ #include <string>
  #include <OpenXLSX.hpp>
  #include <vector>
  #include "programSettings.h"
@@ -8,7 +9,7 @@
 using namespace std;
 using namespace OpenXLSX;
 
-enum class availableDay 
+enum class availableDays 
 {
     poniedzialek,
     wtorek,
@@ -20,11 +21,15 @@ enum class availableDay
 
 class teacher
 {
-    
-    private:
-
+private:
+    static uint teacherInitialsReadLine;
+    string initials;
     vector<vector<int>> availabilityMatrix;
-    int readAvailability();
+
+public:
+    teacher();
+    int readAvailability(string inputFilePath);
+    int findAndCheckInitials(const OpenXLSX::XLWorksheet& wks);
 
 };
 
