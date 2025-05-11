@@ -30,6 +30,7 @@ public:
     teacher();
     int readAvailability(string inputFilePath);
     int findAndCheckInitials(const OpenXLSX::XLWorksheet& wks);
+    int readAvailabilityMatrix(const OpenXLSX::XLWorksheet& wks);
 
 };
 

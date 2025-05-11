@@ -1,7 +1,7 @@
 
 #include <iostream>
 #include "programSettings.h"
-#include "teacher.h"
+#include "school.h"
 
 using namespace std;
 
@@ -11,8 +11,8 @@ int main()
     programSettings settings;
     settings.readProgramSettings();
 
-    teacher firstTeacher;
-    firstTeacher.readAvailability(settings.getInputFilePath());
+    school schoolClass;
+    schoolClass.readTeacherAvailabilityFromFile(settings.getInputFilePath());
 
     return 0;
 }

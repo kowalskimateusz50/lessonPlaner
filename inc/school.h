@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include "department.h"
+#include "teacher.h"
 
 using namespace std;
 
@@ -15,6 +16,6 @@ class school
     school();
 
     //Methods
-    int readDeparmentsFromFile();
+    int readTeacherAvailabilityFromFile(string inputFilePath);
 };
 
