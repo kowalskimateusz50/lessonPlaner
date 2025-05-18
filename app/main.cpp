@@ -13,6 +13,7 @@ int main()
 
     school schoolClass;
     schoolClass.readTeacherAvailabilityFromFile(settings.getInputFilePath());
+    schoolClass.showTeachersAvailability();
 
     return 0;
 }

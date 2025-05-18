@@ -10,12 +10,13 @@ using namespace std;
 class school 
 {
     private:
-     vector <department> departments;
+     vector <teacher> teachers;
 
     public:
     school();
 
     //Methods
     int readTeacherAvailabilityFromFile(string inputFilePath);
+    void showTeachersAvailability();
 };
 
