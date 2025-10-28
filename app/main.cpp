@@ -11,9 +11,15 @@ int main()
     programSettings settings;
     settings.readProgramSettings();
 
-    school schoolClass;
-    schoolClass.readTeacherAvailabilityFromFile(settings.getInputFilePath());
-    schoolClass.showTeachersAvailability();
+    //Open xlsx document
+    OpenXLSX::XLDocument doc;
+    doc.open(settings.getInputFilePath()); 
+    //Open worksheet
+    OpenXLSX::XLWorksheet wks = doc.workbook().worksheet(1);
+
+    school schoolInstance;
+    schoolInstance.readTeachersAvailability(wks);
+    schoolInstance.showTeachersAvailability();
 
     return 0;
 }

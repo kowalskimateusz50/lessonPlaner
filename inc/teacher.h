@@ -9,30 +9,21 @@
 using namespace std;
 using namespace OpenXLSX;
 
-enum class availableDays 
-{
-    poniedzialek,
-    wtorek,
-    sroda,
-    czwartek,
-    piatek
-};
-
-
 class teacher
 {
-private:
-    static uint teacherInitialsReadLine;
-    string initials;
-    vector<vector<int>> availabilityMatrix; 
 
 public:
+
     teacher();
-    int readAvailability(string inputFilePath);
-    int findAndCheckInitials(const OpenXLSX::XLWorksheet& wks);
-    int readAvailabilityMatrix(const OpenXLSX::XLWorksheet& wks);
+    int readAvailability(const OpenXLSX::XLWorksheet& wks, uint& initialsRowPointer);
+    int findAndCheckInitials(const OpenXLSX::XLWorksheet& wks, uint& initialsRowPointer);
+    int readAvailabilityMatrix(const OpenXLSX::XLWorksheet& wks, uint& initialsRowPointer);
     void showAvailability();
 
+private:
+    avaiabilitySettings m_availabilitySettings;
+    string m_initials;
+    vector<vector<int>> m_availabilityMatrix;
 };
 
 

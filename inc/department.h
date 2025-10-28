@@ -2,19 +2,28 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include "teacher.h"
+#include "programSettings.h"
 
 using namespace std;
 
-class department 
+/**
+ * @brief Class which describes department
+ * 
+ * 
+ * 
+ */
+
+class department
 {
     public:
 
-    uint year;      //Year of department
-    string name;    //Name of department 
-    string teacher; //Primary teacher assigned to department
+      uint year;
+      string name;
+      vector<string> assignedTeachers;
+      department();
+      
 
-    department();
-    
 };
 

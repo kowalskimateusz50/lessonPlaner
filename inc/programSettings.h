@@ -7,13 +7,33 @@
 using namespace std;
 
 namespace programConfig {
-    constexpr int initialsReadLineBegining = 2;
-    constexpr int initialsAvailabilityOffset = 1;
-    constexpr int maxNoAvailabilityUnits = 10;
-    constexpr int maxNoAvailabilityDays = 5;
-    constexpr int availabilityMatrixOffset = 12;
-    constexpr int initialsLength = 2;
+    constexpr int initialsBeginningRow = 2;
 }
+
+class programSettings
+{
+private:
+    string inputFilePath;
+
+public:
+    programSettings();
+    int readProgramSettings();
+    string getInputFilePath();
+
+};
+
+class avaiabilitySettings
+{
+public:
+    string initialsColumn;
+    int startColumn;
+    int endColumn;
+    int initialsLength;
+    int maxNoOfAvailableUnits;
+    int maxNoOfAvailableDays;
+    int availabilityMatrixRowOffset;
+    int initialsToAvailabilityRowOffset;
+};
 
 enum class wksColumns {
     A = 1,
@@ -30,14 +50,12 @@ enum class wksColumns {
     L
 };
 
-class programSettings
+enum class availableDays 
 {
-    private:
-    string inputFilePath;
-
-    public:
-    programSettings();
-    int readProgramSettings();
-    string getInputFilePath();
-
+    poniedzialek,
+    wtorek,
+    sroda,
+    czwartek,
+    piatek
 };
+

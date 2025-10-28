@@ -7,16 +7,23 @@
 
 using namespace std;
 
-class school 
+class school
 {
-    private:
-     vector <teacher> teachers;
 
-    public:
-    school();
+public:
 
-    //Methods
-    int readTeacherAvailabilityFromFile(string inputFilePath);
-    void showTeachersAvailability();
+  school();
+
+  //Methods
+  int readTeachersAvailability(OpenXLSX::XLWorksheet& wks);
+  void showTeachersAvailability();
+  //int readDepartmentAvailability(string inputFilePath);
+  //void showDepartmentsAvailability();
+
+private:
+  avaiabilitySettings settings;
+  vector<teacher>teachers;
+  vector<department>departments;
+
 };
 

@@ -4,5 +4,4 @@ department::department()
 {
     department::year = 0;
     department::name = "";
-    department::teacher = "";
 }
