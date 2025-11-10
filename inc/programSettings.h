@@ -47,7 +47,15 @@ enum class wksColumns {
     I,
     J,
     K,
-    L
+    L,
+    M,
+    N,
+    O,
+    P,
+    Q,
+    R,
+    S,
+    T
 };
 
 enum class availableDays 

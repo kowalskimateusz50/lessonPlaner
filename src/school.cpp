@@ -41,3 +41,38 @@ void school::showTeachersAvailability()
     }
 }
 
+/**
+ * @brief Funtion to read departments availability
+ *
+ * @param[in] wks reference to excel works sheet document
+ *
+ * @return amount of read departments
+ */
+int school::readDepartmentsAvailability(OpenXLSX::XLWorksheet& wks)
+{
+    department readDepartment;
+    int departmentCounter = 0;
+    uint rowPointer = 2;
+
+    while (readDepartment.readAvailability(wks, rowPointer))
+    {
+        departmentCounter++;
+        departments.push_back(readDepartment);
+        cout << "\nFound department No.: " << departmentCounter << endl;
+    }
+
+    cout << "\nStopped searching departments: " << departmentCounter << endl;
+    return departmentCounter;
+}
+
+/**
+ * @brief funtion to display departments availability
+ * 
+ */
+void school::showDepartmentsAvailability()
+{
+    for (int i = 0; i < teachers.size(); i++)
+    {
+        departments[i].showAvailability();
+    }
+}

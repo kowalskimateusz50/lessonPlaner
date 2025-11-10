@@ -9,18 +9,23 @@
 using namespace std;
 using namespace OpenXLSX;
 
+/**
+ * @brief Class which describes teacher
+ * 
+ *
+ * 
+ *
+ */
 class teacher
 {
-
-public:
-
+  public:
     teacher();
     int readAvailability(const OpenXLSX::XLWorksheet& wks, uint& initialsRowPointer);
     int findAndCheckInitials(const OpenXLSX::XLWorksheet& wks, uint& initialsRowPointer);
     int readAvailabilityMatrix(const OpenXLSX::XLWorksheet& wks, uint& initialsRowPointer);
     void showAvailability();
 
-private:
+  private:
     avaiabilitySettings m_availabilitySettings;
     string m_initials;
     vector<vector<int>> m_availabilityMatrix;

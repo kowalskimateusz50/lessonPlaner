@@ -44,7 +44,6 @@ int teacher::readAvailability(const OpenXLSX::XLWorksheet& wks, uint& initialsLi
 
 int teacher::findAndCheckInitials(const OpenXLSX::XLWorksheet& wks, uint& initialsRowPointer)
 {
-
     string cellAdress = m_availabilitySettings.initialsColumn + to_string(initialsRowPointer);
     string tempInitials =  wks.cell(cellAdress).value().get<string>();
     //Check if initials are into criteria
@@ -70,7 +69,8 @@ int teacher::readAvailabilityMatrix(const OpenXLSX::XLWorksheet& wks, uint& init
          row++, i++)
     {
         for (int col = m_availabilitySettings.startColumn, j = 0;
-             col <= m_availabilitySettings.endColumn; col++, j++)
+             col <= m_availabilitySettings.endColumn; 
+             col++, j++)
         {
             auto cell = wks.cell(XLCellReference(row, col));
             //save to vector
