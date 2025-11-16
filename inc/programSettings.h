@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <logging.h>
 
 using namespace std;
 
@@ -12,10 +13,19 @@ namespace programConfig {
 
 class programSettings
 {
-private:
-    string inputFilePath;
+  private:
+    string m_inputFilePath;
+    string m_logfilePath;
+    int m_isLogModeOn;
 
-public:
+    enum class settingsFileLines
+    {
+      inputFile = 0,
+      isLogModeOn,
+      pathToLogFile
+    }
+
+  public:
     programSettings();
     int readProgramSettings();
     string getInputFilePath();
@@ -24,7 +34,7 @@ public:
 
 class avaiabilitySettings
 {
-public:
+  public:
     string initialsColumn;
     int startColumn;
     int endColumn;
@@ -35,7 +45,8 @@ public:
     int initialsToAvailabilityRowOffset;
 };
 
-enum class wksColumns {
+enum class wksColumns 
+{
     A = 1,
     B,
     C,

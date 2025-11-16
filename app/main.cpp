@@ -13,7 +13,7 @@ int main()
 
   //Open xlsx document
   OpenXLSX::XLDocument doc;
-  doc.open(settings.getInputFilePath()); 
+  doc.open(settings.getInputFilePath());
   //Open worksheet
   OpenXLSX::XLWorksheet wks = doc.workbook().worksheet(1);
 
@@ -22,7 +22,6 @@ int main()
   //read teachers
   schoolInstance.readTeachersAvailability(wks);
   schoolInstance.showTeachersAvailability();
-
   schoolInstance.readDepartmentsAvailability(wks);
   schoolInstance.showDepartmentsAvailability();
 
