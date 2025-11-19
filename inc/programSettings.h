@@ -11,25 +11,26 @@ namespace programConfig {
     constexpr int initialsBeginningRow = 2;
 }
 
-class programSettings
+class ProgramSettings
 {
   private:
-    string m_inputFilePath;
-    string m_logfilePath;
-    int m_isLogModeOn;
+    string inputFilePath_;
+    int isLogModeOn_;
+    string logFilePath_;
 
     enum class settingsFileLines
     {
       inputFile = 0,
       isLogModeOn,
       pathToLogFile
-    }
+    };
 
   public:
-    programSettings();
+    ProgramSettings();
     int readProgramSettings();
     string getInputFilePath();
-
+    string getLogFilePath();
+    int isLogModeOn();
 };
 
 class avaiabilitySettings

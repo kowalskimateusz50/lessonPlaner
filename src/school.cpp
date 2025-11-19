@@ -13,7 +13,7 @@ school::school()
  *
  * @return amount of read teachers
  */
-int school::readTeachersAvailability(OpenXLSX::XLWorksheet& wks)
+int school::readTeachersAvailability(loggingToTextFile& logger, OpenXLSX::XLWorksheet& wks)
 {
     teacher readTeacher;
     int teacherCounter = 0;
@@ -33,7 +33,7 @@ int school::readTeachersAvailability(OpenXLSX::XLWorksheet& wks)
  * @brief funtion to display teachers availability
  * 
  */
-void school::showTeachersAvailability()
+void school::showTeachersAvailability(loggingToTextFile& logger)
 {
     for (int i = 0; i < teachers.size(); i++)
     {
@@ -48,7 +48,7 @@ void school::showTeachersAvailability()
  *
  * @return amount of read departments
  */
-int school::readDepartmentsAvailability(OpenXLSX::XLWorksheet& wks)
+int school::readDepartmentsAvailability(loggingToTextFile& logger, OpenXLSX::XLWorksheet& wks)
 {
     department readDepartment;
     int departmentCounter = 0;
@@ -69,7 +69,7 @@ int school::readDepartmentsAvailability(OpenXLSX::XLWorksheet& wks)
  * @brief funtion to display departments availability
  * 
  */
-void school::showDepartmentsAvailability()
+void school::showDepartmentsAvailability(loggingToTextFile& logger)
 {
     for (int i = 0; i < teachers.size(); i++)
     {

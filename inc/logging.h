@@ -20,8 +20,8 @@ namespace fs = filesystem;
 class loggingToTextFile
 {
 	public:
-		loggingToTextFile(string iLogFolderPath);
-		int appendLog(string ilogMessage, int iLogType);
+		loggingToTextFile(string logFolderPath);
+		int appendLog(int logType, string logMessage);
 
 	private:
 
@@ -30,8 +30,9 @@ class loggingToTextFile
 		time_t tTime;
 	  tm* localTime;
 
+		string logFolderPath_;
+
 	  string logFileName;
-		string logFolderPath;
 		string logFilePath;
 
 		fstream logFile;

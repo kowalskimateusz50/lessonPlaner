@@ -1,12 +1,12 @@
 #include "logging.h"
 
-loggingToTextFile::loggingToTextFile(string iLogFolderPath)
+loggingToTextFile::loggingToTextFile(string logFolderPath)
 {
 	/* Save log foler path into class */
-	logFolderPath = iLogFolderPath;
+	logFolderPath_ = logFolderPath;
 
 	/* Create new local folder if doesn't exist */
-    if (fs::create_directories(logFolderPath))
+    if (fs::create_directories(logFolderPath_))
     {
       cout << "Folder created.\n";
     }
@@ -15,23 +15,23 @@ loggingToTextFile::loggingToTextFile(string iLogFolderPath)
       cout << "Folder already exist.\n";
     }
 }
-int loggingToTextFile::appendLog(string iLogMessage, int iLogType)
+int loggingToTextFile::appendLog(int logType, string logMessage)
 {
 	tTime = time(0);
 	localTime = localtime(&tTime);
 
 	/* Prepare date for filename creation*/
-	logFileName = to_string(1900 + local_time->tm_year) + AddLeadingZero(local_time->tm_mon) + to_string(local_time->tm_mday);
-	logFilePath = logFolderPath + LogFileName + ".txt";
+	logFileName = to_string(1900 + localTime->tm_year) + addLeadingZero(localTime->tm_mon) + to_string(localTime->tm_mday);
+	logFilePath = (logFolderPath_ + logFileName + ".txt");
 
 	/* File opening */
-	logFile.open(LogFilePath, std::ios_base::app);
+	logFile.open(logFilePath, std::ios_base::app);
 
 	/* Writing string to file */
-	logFile << GetMessageType(LogType) + "[" + to_string(local_time->tm_mday) + "/" + 
-    AddLeadingZero(local_time->tm_mon) + "/" + to_string(1900 + local_time->tm_year) + " " + 
-      AddLeadingZero(local_time->tm_hour) + ":" + AddLeadingZero(local_time->tm_min) + ":" + 
-        AddLeadingZero(local_time->tm_sec) + "]" + ": " + logMessage << endl;
+	logFile << getMessageType(logType) + "[" + to_string(localTime->tm_mday) + "/" + 
+    addLeadingZero(localTime->tm_mon) + "/" + to_string(1900 + localTime->tm_year) + " " + 
+      addLeadingZero(localTime->tm_hour) + ":" + addLeadingZero(localTime->tm_min) + ":" + 
+        addLeadingZero(localTime->tm_sec) + "]" + ": " + logMessage << endl;
 	
 	/* File closing */
 	logFile.close();
