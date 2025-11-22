@@ -15,19 +15,24 @@ school::school()
  */
 int school::readTeachersAvailability(loggingToTextFile& logger, OpenXLSX::XLWorksheet& wks)
 {
-    teacher readTeacher;
-    int teacherCounter = 0;
-    uint rowPointer = 2;
+  teacher readTeacher;
+  int teacherCounter = 0;
+  uint rowPointer = 2;
+  stringstream ssLog;
 
-    while (readTeacher.readAvailability(wks, rowPointer))
-    {
-        teacherCounter++;
-        teachers.push_back(readTeacher);
-        cout << "\nFound teacher No.: " << teacherCounter << endl;
-    }
+  while (readTeacher.readAvailability(wks, rowPointer))
+  {
+      teacherCounter++;
+      teachers.push_back(readTeacher);
+      ssLog << "\nFound teacher No.: " << teacherCounter << endl;
+  }
 
-    cout << "\nStopped searching teachers: " << teacherCounter << endl;
-    return teacherCounter;
+  ssLog << "\nStopped searching teachers, found: " << teacherCounter << endl;
+
+  logger.appendLog(M_INFO, 
+                   (string)"LOG.2: school.cpp school::readTeachersAvailability" + ssLog.str());
+
+  return teacherCounter;
 }
 /**
  * @brief funtion to display teachers availability

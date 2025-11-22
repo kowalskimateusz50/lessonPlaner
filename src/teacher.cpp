@@ -23,11 +23,11 @@ int teacher::readAvailability(const OpenXLSX::XLWorksheet& wks, uint& initialsLi
         //Read availability matrix
         if (readAvailabilityMatrix(wks, initialsLinePointer))
         {
-            cout << "\nAvailability read successfully: " << endl;
+            cout << "\nAvailability matrix read successfully: " << endl;
         }
         else
         {
-            cout << "\nAvailability read failed: " << endl;
+            cout << "\nAvailability matrix read failed: " << endl;
             return 0;
         }
 

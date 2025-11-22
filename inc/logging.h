@@ -17,19 +17,36 @@ namespace fs = filesystem;
 #define M_WARNING 2
 #define M_ERROR 3
 
+/**
+ * @brief 
+ * 
+ */
 class loggingToTextFile
 {
 	public:
-		loggingToTextFile(string logFolderPath);
-		int appendLog(int logType, string logMessage);
+    /**
+     * @brief Construct a new logging To Text File object
+     * 
+     * @param isLogModeOn 
+     * @param isLogToConsoleOn 
+     * @param isLogToFileOn 
+     * @param logFolderPath 
+     */
+    loggingToTextFile(bool isLogModeOn,
+                      bool isLogToConsoleOn,
+                      bool isLogToFileOn,
+                      string logFolderPath);
+		void appendLog(int logType, string logMessage);
 
 	private:
-
 		mutex mLock;
 
 		time_t tTime;
 	  tm* localTime;
 
+    bool isLogModeOn_;
+    bool isLogToConsoleOn_;
+    bool isLogToFileOn_;
 		string logFolderPath_;
 
 	  string logFileName;

@@ -3,9 +3,11 @@
 ProgramSettings::ProgramSettings()
 {
   //Initialize input file path
+  isLogModeOn_ = true;
+  isLogToConsoleOn_ = true;
+  isLogToFileOn_ = true;
   inputFilePath_ = "";
   logFilePath_ = "";
-  isLogModeOn_ = 0;
 }
 
 int ProgramSettings::readProgramSettings()
@@ -54,18 +56,11 @@ int ProgramSettings::readProgramSettings()
             {
               tmpIsLogModeOn += line[i];
             }
-            if (tmpIsLogModeOn == "true")
-            {
-              isLogModeOn_ = 1;
-            }
-            else
-            {
-              isLogModeOn_ = 0;
-            }
+            tmpIsLogModeOn == "true" ? true : false;
             readSettingsStatus++;
           }
           break;
-          
+
         case 2:
           verifyLineContent = "";
           verifyLinePattern = "plik_diagnostyczny='";
@@ -89,17 +84,27 @@ int ProgramSettings::readProgramSettings()
 return readSettingsStatus;
 }
 
-string ProgramSettings::getInputFilePath()
-{
-    return inputFilePath_;
-}
-
-int ProgramSettings::isLogModeOn()
+bool ProgramSettings::isLogModeOn()
 {
   return isLogModeOn_;
+}
+
+bool ProgramSettings::isLogToConsoleOn()
+{
+  return isLogToConsoleOn_;
+}
+
+bool ProgramSettings::isLogToFileOn()
+{
+  return isLogToFileOn_;
 }
 
 string ProgramSettings::getLogFilePath()
 {
     return logFilePath_;
+}
+
+string ProgramSettings::getInputFilePath()
+{
+    return inputFilePath_;
 }

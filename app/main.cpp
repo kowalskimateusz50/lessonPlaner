@@ -13,8 +13,12 @@ int main()
   settings.readProgramSettings();
 
   //Creating logging class instance and log settings
-  loggingToTextFile logger(settings.getLogFilePath());
-  logger.appendLog(M_INFO, (string)"LOG.1"
+  loggingToTextFile logger(settings.isLogModeOn(),
+                           settings.isLogToConsoleOn(),
+                           settings.isLogToFileOn(),
+                           settings.getLogFilePath());
+  
+  logger.appendLog(M_INFO, (string)"LOG.1: main.cpp settings.readProgramSettings()"
                    " logFilePath=" + settings.getLogFilePath() + 
                    " isLogModeOn=" + to_string(settings.isLogModeOn()) + 
                    " logFilePath=" + settings.getLogFilePath());

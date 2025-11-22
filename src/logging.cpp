@@ -1,8 +1,14 @@
 #include "logging.h"
 
-loggingToTextFile::loggingToTextFile(string logFolderPath)
+loggingToTextFile::loggingToTextFile(bool isLogModeOn,
+                                     bool isLogToConsoleOn,
+                                     bool isLogToFileOn, 
+                                     string logFolderPath)
 {
 	/* Save log foler path into class */
+  isLogModeOn_ = isLogModeOn;
+  isLogToConsoleOn_ = isLogToConsoleOn;
+  isLogToFileOn_ = isLogToFileOn;
 	logFolderPath_ = logFolderPath;
 
 	/* Create new local folder if doesn't exist */
@@ -15,28 +21,41 @@ loggingToTextFile::loggingToTextFile(string logFolderPath)
       cout << "Folder already exist.\n";
     }
 }
-int loggingToTextFile::appendLog(int logType, string logMessage)
+void loggingToTextFile::appendLog(int logType, string logMessage)
 {
-	tTime = time(0);
-	localTime = localtime(&tTime);
+  stringstream sslogMessage;
+  if (isLogModeOn_)
+  {
+    tTime = time(0);
+	  localTime = localtime(&tTime);
 
-	/* Prepare date for filename creation*/
-	logFileName = to_string(1900 + localTime->tm_year) + addLeadingZero(localTime->tm_mon) + to_string(localTime->tm_mday);
-	logFilePath = (logFolderPath_ + logFileName + ".txt");
+    sslogMessage << getMessageType(logType) + "[" + to_string(localTime->tm_mday) + "/" + 
+      addLeadingZero(localTime->tm_mon) + "/" + to_string(1900 + localTime->tm_year) + " " + 
+        addLeadingZero(localTime->tm_hour) + ":" + addLeadingZero(localTime->tm_min) + ":" + 
+          addLeadingZero(localTime->tm_sec) + "]" + ": " + logMessage << endl;
 
-	/* File opening */
-	logFile.open(logFilePath, std::ios_base::app);
+    if (isLogToConsoleOn_)
+    {
+      cout << sslogMessage.str();
+    }
 
-	/* Writing string to file */
-	logFile << getMessageType(logType) + "[" + to_string(localTime->tm_mday) + "/" + 
-    addLeadingZero(localTime->tm_mon) + "/" + to_string(1900 + localTime->tm_year) + " " + 
-      addLeadingZero(localTime->tm_hour) + ":" + addLeadingZero(localTime->tm_min) + ":" + 
-        addLeadingZero(localTime->tm_sec) + "]" + ": " + logMessage << endl;
-	
-	/* File closing */
-	logFile.close();
+    if (isLogToFileOn_)
+    {
+      /* Prepare date for filename creation*/
+      logFileName = to_string(1900 + localTime->tm_year) + addLeadingZero(localTime->tm_mon) + 
+        to_string(localTime->tm_mday);
+      logFilePath = (logFolderPath_ + logFileName + ".txt");
 
-	return 0;
+      /* File opening */
+      logFile.open(logFilePath, std::ios_base::app);
+
+      /* Writing string to file */
+      logFile << sslogMessage.str();
+
+      /* File closing */
+      logFile.close();
+    }
+  }
 }
 string loggingToTextFile::addLeadingZero(int number)
 {

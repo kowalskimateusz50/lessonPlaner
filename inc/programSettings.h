@@ -15,7 +15,9 @@ class ProgramSettings
 {
   private:
     string inputFilePath_;
-    int isLogModeOn_;
+    bool isLogModeOn_;
+    bool isLogToConsoleOn_;
+    bool isLogToFileOn_;
     string logFilePath_;
 
     enum class settingsFileLines
@@ -28,9 +30,11 @@ class ProgramSettings
   public:
     ProgramSettings();
     int readProgramSettings();
+    bool isLogModeOn();
+    bool isLogToConsoleOn();
+    bool isLogToFileOn();
     string getInputFilePath();
     string getLogFilePath();
-    int isLogModeOn();
 };
 
 class avaiabilitySettings
