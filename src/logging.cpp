@@ -1,9 +1,9 @@
 #include "logging.h"
 
-loggingToTextFile::loggingToTextFile(bool isLogModeOn,
-                                     bool isLogToConsoleOn,
-                                     bool isLogToFileOn, 
-                                     string logFolderPath)
+Logging::Logging(bool isLogModeOn,
+                 bool isLogToConsoleOn,
+                 bool isLogToFileOn, 
+                 string logFolderPath)
 {
 	/* Save log foler path into class */
   isLogModeOn_ = isLogModeOn;
@@ -21,11 +21,13 @@ loggingToTextFile::loggingToTextFile(bool isLogModeOn,
       cout << "Folder already exist.\n";
     }
 }
-void loggingToTextFile::appendLog(int logType, string logMessage)
+
+void Logging::appendLog(int logType, int isLogEnabled, string logMessage)
 {
   stringstream sslogMessage;
-  if (isLogModeOn_)
+  if (isLogModeOn_ && isLogEnabled)
   {
+    mLock_.lock();
     tTime = time(0);
 	  localTime = localtime(&tTime);
 
@@ -55,9 +57,10 @@ void loggingToTextFile::appendLog(int logType, string logMessage)
       /* File closing */
       logFile.close();
     }
+    mLock_.unlock();
   }
 }
-string loggingToTextFile::addLeadingZero(int number)
+string Logging::addLeadingZero(int number)
 {
 	if (number < 10)
 	{
@@ -69,7 +72,7 @@ string loggingToTextFile::addLeadingZero(int number)
 	}
 }
 
-string loggingToTextFile::getMessageType(int type)
+string Logging::getMessageType(int type)
 {
 	if (type == 1)
 	{

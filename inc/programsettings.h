@@ -37,19 +37,6 @@ class ProgramSettings
     string getLogFilePath();
 };
 
-class avaiabilitySettings
-{
-  public:
-    string initialsColumn;
-    int startColumn;
-    int endColumn;
-    int initialsLength;
-    int maxNoOfAvailableUnits;
-    int maxNoOfAvailableDays;
-    int availabilityMatrixRowOffset;
-    int initialsToAvailabilityRowOffset;
-};
-
 enum class wksColumns 
 {
     A = 1,

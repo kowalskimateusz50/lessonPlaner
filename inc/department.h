@@ -2,9 +2,9 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
 #include <OpenXLSX.hpp>
-#include "programSettings.h"
+#include "availability.h"
+#include "programsettings.h"
 
 using namespace std;
 using namespace OpenXLSX;
@@ -14,19 +14,11 @@ using namespace OpenXLSX;
  * 
  *
  */
-class department
+class department  : public Availability
 {
   public:
-    department();
-    int readAvailability(const OpenXLSX::XLWorksheet& wks, uint& initialsRowPointer);
-    int findAndCheckInitials(const OpenXLSX::XLWorksheet& wks, uint& initialsRowPointer);
-    int readAvailabilityMatrix(const OpenXLSX::XLWorksheet& wks, uint& initialsRowPointer);
-    void showAvailability();
-
-  private:
-    avaiabilitySettings m_availabilitySettings;
-    string m_initials;
-    vector<vector<int>> m_availabilityMatrix;
-
+    department(OpenXLSX::XLWorksheet& wks,
+               uint& initialsRowPointer,
+               Logging& logger);
 };
 

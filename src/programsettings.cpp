@@ -1,4 +1,4 @@
-#include "programSettings.h"
+#include "programsettings.h"
 
 ProgramSettings::ProgramSettings()
 {

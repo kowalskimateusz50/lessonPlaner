@@ -4,6 +4,7 @@
 #include <vector>
 #include "department.h"
 #include "teacher.h"
+#include <OpenXLSX.hpp>
 #include "logging.h"
 
 using namespace OpenXLSX;
@@ -14,16 +15,19 @@ class school
 
   public:
 
-    school();
-    int readTeachersAvailability(loggingToTextFile& logger, OpenXLSX::XLWorksheet& wks);
-    void showTeachersAvailability(loggingToTextFile& logger);
-    int readDepartmentsAvailability(loggingToTextFile& logger, OpenXLSX::XLWorksheet& wks);
-    void showDepartmentsAvailability(loggingToTextFile& logger);
+    school(OpenXLSX::XLWorksheet& wks, Logging& logger);
+    int readTeachersAvailability();
+    void showTeachersAvailability();
+    int readDepartmentsAvailability();
+    void showDepartmentsAvailability();
 
   private:
-    avaiabilitySettings settings;
-    vector<teacher>teachers;
-    vector<department>departments;
+
+    Logging& logger_;
+    OpenXLSX::XLWorksheet& wks_;
+
+    vector<teacher>teachers_;
+    vector<department>departments_;
 
 };
 

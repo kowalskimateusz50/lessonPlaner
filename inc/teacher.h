@@ -2,12 +2,10 @@
 
  #include <iostream>
  #include <string>
- #include <OpenXLSX.hpp>
- #include <vector>
- #include "programSettings.h"
+ #include "availability.h"
+#include "programsettings.h"
 
 using namespace std;
-using namespace OpenXLSX;
 
 /**
  * @brief Class which describes teacher
@@ -16,19 +14,12 @@ using namespace OpenXLSX;
  * 
  *
  */
-class teacher
+class teacher : public Availability
 {
   public:
-    teacher();
-    int readAvailability(const OpenXLSX::XLWorksheet& wks, uint& initialsRowPointer);
-    int findAndCheckInitials(const OpenXLSX::XLWorksheet& wks, uint& initialsRowPointer);
-    int readAvailabilityMatrix(const OpenXLSX::XLWorksheet& wks, uint& initialsRowPointer);
-    void showAvailability();
-
-  private:
-    avaiabilitySettings m_availabilitySettings;
-    string m_initials;
-    vector<vector<int>> m_availabilityMatrix;
+    teacher(OpenXLSX::XLWorksheet& wks,
+            uint& initialsRowPointer,
+            Logging& logger);
 };
 
 

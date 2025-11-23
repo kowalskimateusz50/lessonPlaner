@@ -1,10 +1,7 @@
 #include "school.h"
 
-school::school()
-{
-    
-  
-}
+school::school(OpenXLSX::XLWorksheet& wks, Logging& logger)
+  : wks_(wks), logger_(logger) {} // initialization list
 
 /**
  * @brief Funtion to read teacher availability
@@ -13,24 +10,26 @@ school::school()
  *
  * @return amount of read teachers
  */
-int school::readTeachersAvailability(loggingToTextFile& logger, OpenXLSX::XLWorksheet& wks)
+int school::readTeachersAvailability()
 {
-  teacher readTeacher;
   int teacherCounter = 0;
   uint rowPointer = 2;
-  stringstream ssLog;
+  stringstream logMessage;
+  teacher readTeacher(wks_, rowPointer, logger_);
 
-  while (readTeacher.readAvailability(wks, rowPointer))
+  while (readTeacher.readAvailability())
   {
       teacherCounter++;
-      teachers.push_back(readTeacher);
-      ssLog << "\nFound teacher No.: " << teacherCounter << endl;
+      teachers_.push_back(readTeacher);
+      logMessage << "\nFound teacher No.: " << teacherCounter << endl;
   }
 
-  ssLog << "\nStopped searching teachers, found: " << teacherCounter << endl;
+  logMessage << "\nStopped searching teachers, found: " << teacherCounter << " teachers" << endl;
 
-  logger.appendLog(M_INFO, 
-                   (string)"LOG.2: school.cpp school::readTeachersAvailability" + ssLog.str());
+  logger_.appendLog(M_INFO,
+                    M_LOG_ENABLED, 
+                    (string)"LOG.2: school.cpp school::readTeachersAvailability()" +
+                    logMessage.str());
 
   return teacherCounter;
 }
@@ -38,11 +37,11 @@ int school::readTeachersAvailability(loggingToTextFile& logger, OpenXLSX::XLWork
  * @brief funtion to display teachers availability
  * 
  */
-void school::showTeachersAvailability(loggingToTextFile& logger)
+void school::showTeachersAvailability()
 {
-    for (int i = 0; i < teachers.size(); i++)
+    for (int i = 0; i < teachers_.size(); i++)
     {
-        teachers[i].showAvailability();
+      teachers_[i].showAvailability();
     }
 }
 
@@ -53,31 +52,37 @@ void school::showTeachersAvailability(loggingToTextFile& logger)
  *
  * @return amount of read departments
  */
-int school::readDepartmentsAvailability(loggingToTextFile& logger, OpenXLSX::XLWorksheet& wks)
+int school::readDepartmentsAvailability()
 {
-    department readDepartment;
-    int departmentCounter = 0;
-    uint rowPointer = 2;
+  int departmentCounter = 0;
+  uint rowPointer = 2;
+  stringstream logMessage;
+  department readDepartment(wks_, rowPointer, logger_);
 
-    while (readDepartment.readAvailability(wks, rowPointer))
-    {
-        departmentCounter++;
-        departments.push_back(readDepartment);
-        cout << "\nFound department No.: " << departmentCounter << endl;
-    }
+  while (readDepartment.readAvailability())
+  {
+    departmentCounter++;
+    departments_.push_back(readDepartment);
+    logMessage << "\nFound department No.: " << departmentCounter << endl;
+  }
+  logMessage << "\nStopped searching departments: " << departmentCounter << endl;
 
-    cout << "\nStopped searching departments: " << departmentCounter << endl;
-    return departmentCounter;
+  logger_.appendLog(M_INFO,
+                    M_LOG_ENABLED,
+                    (string)"LOG.8: school.cpp school::readDepartmentsAvailability()" +
+                    logMessage.str());
+
+  return departmentCounter;
 }
 
 /**
  * @brief funtion to display departments availability
  * 
  */
-void school::showDepartmentsAvailability(loggingToTextFile& logger)
+void school::showDepartmentsAvailability()
 {
-    for (int i = 0; i < teachers.size(); i++)
-    {
-        departments[i].showAvailability();
-    }
+  for (int i = 0; i < departments_.size(); i++)
+  {
+    departments_[i].showAvailability();
+  }
 }

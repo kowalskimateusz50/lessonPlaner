@@ -17,29 +17,39 @@ namespace fs = filesystem;
 #define M_WARNING 2
 #define M_ERROR 3
 
+#define M_LOG_ENABLED true
+#define M_LOG_DISABLED false
+
 /**
  * @brief 
  * 
  */
-class loggingToTextFile
+class Logging
 {
 	public:
     /**
-     * @brief Construct a new logging To Text File object
-     * 
-     * @param isLogModeOn 
-     * @param isLogToConsoleOn 
-     * @param isLogToFileOn 
-     * @param logFolderPath 
-     */
-    loggingToTextFile(bool isLogModeOn,
+    * @brief Construct a new Logging object
+    * 
+    * @param isLogModeOn 
+    * @param isLogToConsoleOn 
+    * @param isLogToFileOn 
+    * @param logFolderPath 
+    */
+    Logging(bool isLogModeOn,
                       bool isLogToConsoleOn,
                       bool isLogToFileOn,
                       string logFolderPath);
-		void appendLog(int logType, string logMessage);
+    /**
+     * @brief 
+     * 
+     * @param logType 
+     * @param isLogEnabled 
+     * @param logMessage 
+     */
+    void appendLog(int logType, int isLogEnabled, string logMessage);
 
 	private:
-		mutex mLock;
+		mutex mLock_;
 
 		time_t tTime;
 	  tm* localTime;

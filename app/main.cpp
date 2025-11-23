@@ -1,6 +1,6 @@
 
 #include <iostream>
-#include "programSettings.h"
+#include "programsettings.h"
 #include "school.h"
 #include "logging.h"
 
@@ -13,12 +13,14 @@ int main()
   settings.readProgramSettings();
 
   //Creating logging class instance and log settings
-  loggingToTextFile logger(settings.isLogModeOn(),
+  Logging logger(settings.isLogModeOn(),
                            settings.isLogToConsoleOn(),
                            settings.isLogToFileOn(),
                            settings.getLogFilePath());
   
-  logger.appendLog(M_INFO, (string)"LOG.1: main.cpp settings.readProgramSettings()"
+  logger.appendLog(M_INFO,
+                   M_LOG_ENABLED,
+                   (string)"LOG.1: main.cpp settings.readProgramSettings()" +
                    " logFilePath=" + settings.getLogFilePath() + 
                    " isLogModeOn=" + to_string(settings.isLogModeOn()) + 
                    " logFilePath=" + settings.getLogFilePath());
@@ -30,12 +32,12 @@ int main()
   OpenXLSX::XLWorksheet wks = doc.workbook().worksheet(1);
 
   //school instance test
-  school schoolInstance;
+  school schoolInstance(wks, logger);
   //read teachers
-  schoolInstance.readTeachersAvailability(logger, wks);
-  schoolInstance.showTeachersAvailability(logger);
-  schoolInstance.readDepartmentsAvailability(logger, wks);
-  schoolInstance.showDepartmentsAvailability(logger);
+  schoolInstance.readTeachersAvailability();
+  schoolInstance.showTeachersAvailability();
+  schoolInstance.readDepartmentsAvailability();
+  schoolInstance.showDepartmentsAvailability();
 
   return 0;
 }
