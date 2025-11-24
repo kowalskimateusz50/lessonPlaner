@@ -6,6 +6,7 @@
 #include "teacher.h"
 #include <OpenXLSX.hpp>
 #include "logging.h"
+#include "teacherassigner.h"
 
 using namespace OpenXLSX;
 using namespace std;
@@ -20,6 +21,8 @@ class school
     void showTeachersAvailability();
     int readDepartmentsAvailability();
     void showDepartmentsAvailability();
+    int readTeachersAssignment();
+    void showTeachersAssignment();
 
   private:
 
