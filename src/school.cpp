@@ -1,8 +1,13 @@
 #include "school.h"
 
 school::school(OpenXLSX::XLWorksheet& wks, Logging& logger)
-  : wks_(wks), logger_(logger) {} // initialization list
-
+  : wks_(wks), logger_(logger) // initialization list
+{
+  // Initialize counters
+  teachersCounter = 0;
+  departmentsCounter = 0;
+  assignmentsCounter = 0;
+}
 /**
  * @brief Funtion to read teacher availability
  *
@@ -12,26 +17,26 @@ school::school(OpenXLSX::XLWorksheet& wks, Logging& logger)
  */
 int school::readTeachersAvailability()
 {
-  int teacherCounter = 0;
+  int teachersCounter = 0;
   uint rowPointer = 2;
   stringstream logMessage;
   teacher readTeacher(wks_, rowPointer, logger_);
 
   while (readTeacher.readAvailability())
   {
-      teacherCounter++;
-      teachers_.push_back(readTeacher);
-      logMessage << "\nFound teacher No.: " << teacherCounter << endl;
+    teachersCounter++;
+    teachers_.push_back(readTeacher);
+    logMessage << "\nFound teacher No.: " << teachersCounter << endl;
   }
 
-  logMessage << "\nStopped searching teachers, found: " << teacherCounter << " teachers" << endl;
+  logMessage << "\nStopped searching teachers, found: " << teachersCounter << " teachers" << endl;
 
   logger_.appendLog(M_INFO,
                     M_LOG_ENABLED, 
                     (string)"LOG.2: school.cpp school::readTeachersAvailability()" +
                     logMessage.str());
 
-  return teacherCounter;
+  return teachersCounter;
 }
 /**
  * @brief funtion to display teachers availability
@@ -54,25 +59,25 @@ void school::showTeachersAvailability()
  */
 int school::readDepartmentsAvailability()
 {
-  int departmentCounter = 0;
+  departmentsCounter = 0;
   uint rowPointer = 2;
   stringstream logMessage;
   department readDepartment(wks_, rowPointer, logger_);
 
   while (readDepartment.readAvailability())
   {
-    departmentCounter++;
+    departmentsCounter++;
     departments_.push_back(readDepartment);
-    logMessage << "\nFound department No.: " << departmentCounter << endl;
+    logMessage << "\nFound department No.: " << departmentsCounter << endl;
   }
-  logMessage << "\nStopped searching departments: " << departmentCounter << endl;
+  logMessage << "\nStopped searching departments: " << departmentsCounter << endl;
 
   logger_.appendLog(M_INFO,
                     M_LOG_ENABLED,
                     (string)"LOG.8: school.cpp school::readDepartmentsAvailability()" +
                     logMessage.str());
 
-  return departmentCounter;
+  return departmentsCounter;
 }
 
 /**
@@ -85,4 +90,39 @@ void school::showDepartmentsAvailability()
   {
     departments_[i].showAvailability();
   }
+}
+
+int school::readTeachersAssignment()
+{
+  assignmentsCounter = 0;
+  uint rowPointer = 3;
+  TeacherAssigner readTeacherAssignment(wks_, rowPointer, logger_);
+  stringstream logMessage;
+
+  while (readTeacherAssignment.readAssignment())
+  {
+    assignmentsCounter++;
+
+    logMessage << "Found new assignment, no.: " << assignmentsCounter << endl;
+    logMessage << "Year: " << readTeacherAssignment.getAssignedYear() << endl;
+    logMessage << "Department: " << readTeacherAssignment.getAssignedDepartment() << endl;
+ 
+    for (const auto& teacher : readTeacherAssignment.getAssignedTeachers())
+    {
+      logMessage << "Assigned teacher: " << teacher << endl;
+    }
+
+    logger_.appendLog(M_INFO,
+                      M_LOG_ENABLED,
+                      (string)"LOG.9: school.cpp school::readTeachersAssignment()" +
+                      logMessage.str());
+  }
+
+  logger_.appendLog(M_INFO,
+                    M_LOG_ENABLED,
+                    (string)"LOG.10: school.cpp school::readTeachersAssignment()" +
+                    (string)"Teacher assignment wasn't, stop finding");
+
+
+  return assignmentsCounter;
 }

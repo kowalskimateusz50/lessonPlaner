@@ -12,7 +12,7 @@ int Availability::readAvailability()
   {
     logger_.appendLog(M_ERROR,
                       M_LOG_ENABLED,
-                      (string)"LOG.3: teacher.cpp Availability::readAvailability() " +
+                      (string)"LOG.3: availability.cpp Availability::readAvailability() " +
                       "Initials wasn't found");
     return 0;
   }

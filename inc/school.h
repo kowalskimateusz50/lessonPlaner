@@ -29,8 +29,12 @@ class school
     Logging& logger_;
     OpenXLSX::XLWorksheet& wks_;
 
-    vector<teacher>teachers_;
-    vector<department>departments_;
+    vector<teacher> teachers_;
+    vector<department> departments_;
+    vector<TeacherAssigner> assignments_;
 
+    uint teachersCounter;
+    uint departmentsCounter;
+    uint assignmentsCounter;
 };
 

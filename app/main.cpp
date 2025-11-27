@@ -38,6 +38,7 @@ int main()
   schoolInstance.showTeachersAvailability();
   schoolInstance.readDepartmentsAvailability();
   schoolInstance.showDepartmentsAvailability();
+  schoolInstance.readTeachersAssignment();
 
   return 0;
 }
