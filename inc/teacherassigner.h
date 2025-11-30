@@ -32,13 +32,13 @@ class TeacherAssigner
     OpenXLSX::XLWorksheet& wks_;
     Logging& logger_;
     uint& rowPointer_;
-    Settings settings_; 
+    Settings settings_;
 
   public:
-   
+
     TeacherAssigner(OpenXLSX::XLWorksheet& wks,
-                                     uint& rowPointer,
-                                     Logging& logger);
+                    uint& rowPointer,
+                    Logging& logger);
     bool readAssignment();
     void showAssignment();
     bool isAssignmentValid();

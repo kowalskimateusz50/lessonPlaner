@@ -87,7 +87,7 @@ void Availability::showAvailability()
 {
   stringstream logMessage;
   logMessage << "\nInitials: " << initials_<< endl;
-  
+
   //Display availability matrix
   for (int units = 0; units < availabilitySettings_.maxNoOfAvailableUnits; units++)
   {

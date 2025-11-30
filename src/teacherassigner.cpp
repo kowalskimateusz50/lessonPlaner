@@ -19,6 +19,18 @@ TeacherAssigner::TeacherAssigner(OpenXLSX::XLWorksheet& wks,
 
 bool TeacherAssigner::readAssignment()
 {
+  //Clear values
+  year_ = 0;
+  department_ = "";
+  assignedTeachers_.clear();
+
+  XLCellAssignable cell = wks_.findCell(settings_.yearColumn + to_string(rowPointer_));
+  //Check whether there is no end of assignment table
+  if (cell.empty())
+  {
+    return false;
+  }
+
   year_ = wks_.cell(settings_.yearColumn + to_string(rowPointer_)).value().get<uint>();
   department_ = wks_.cell(settings_.departmentColumn + to_string(rowPointer_)).value().get<string>();
   //Read teachers in the loop
@@ -30,17 +42,17 @@ bool TeacherAssigner::readAssignment()
     {
       assignedTeachers_.push_back(tempTeacherInitials);
     }
-
   }
+  rowPointer_++;
   return isAssignmentValid();
-
 }
 bool TeacherAssigner::isAssignmentValid()
 {
   //Check department year and name
-  if (!((year_ > 0) &&  (department_.size() >= settings_.minDepartmentLength) &&
+  if (!((year_ > 0) && 
        (department_.size() >= settings_.minDepartmentLength) &&
        (department_.size() <= settings_.maxDepartmentLength) &&
+       (assignedTeachers_.size() > 0) &&
        (assignedTeachers_.size() <= settings_.maxNoAssignedTeachers)))
   {
     return false;

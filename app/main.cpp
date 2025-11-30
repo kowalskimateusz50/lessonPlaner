@@ -8,7 +8,7 @@ using namespace std;
 
 int main() 
 {
-  //Getting program settings 
+  //Getting program settings
   ProgramSettings settings;
   settings.readProgramSettings();
 
@@ -17,12 +17,12 @@ int main()
                            settings.isLogToConsoleOn(),
                            settings.isLogToFileOn(),
                            settings.getLogFilePath());
-  
+
   logger.appendLog(M_INFO,
                    M_LOG_ENABLED,
                    (string)"LOG.1: main.cpp settings.readProgramSettings()" +
-                   " logFilePath=" + settings.getLogFilePath() + 
-                   " isLogModeOn=" + to_string(settings.isLogModeOn()) + 
+                   " logFilePath=" + settings.getLogFilePath() +
+                   " isLogModeOn=" + to_string(settings.isLogModeOn()) +
                    " logFilePath=" + settings.getLogFilePath());
 
   //Open xlsx document
@@ -39,6 +39,9 @@ int main()
   schoolInstance.readDepartmentsAvailability();
   schoolInstance.showDepartmentsAvailability();
   schoolInstance.readTeachersAssignment();
+  schoolInstance.showTeachersAssignment(); 
+
+  doc.close();
 
   return 0;
 }

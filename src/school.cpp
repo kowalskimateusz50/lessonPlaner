@@ -96,9 +96,8 @@ int school::readTeachersAssignment()
 {
   assignmentsCounter = 0;
   uint rowPointer = 3;
-  TeacherAssigner readTeacherAssignment(wks_, rowPointer, logger_);
   stringstream logMessage;
-
+  TeacherAssigner readTeacherAssignment(wks_, rowPointer, logger_);
   while (readTeacherAssignment.readAssignment())
   {
     assignmentsCounter++;
@@ -112,6 +111,8 @@ int school::readTeachersAssignment()
       logMessage << "Assigned teacher: " << teacher << endl;
     }
 
+    assignments_.push_back(readTeacherAssignment);
+
     logger_.appendLog(M_INFO,
                       M_LOG_ENABLED,
                       (string)"LOG.9: school.cpp school::readTeachersAssignment()" +
@@ -123,6 +124,25 @@ int school::readTeachersAssignment()
                     (string)"LOG.10: school.cpp school::readTeachersAssignment()" +
                     (string)"Teacher assignment wasn't, stop finding");
 
-
   return assignmentsCounter;
+}
+
+void school::showTeachersAssignment()
+{
+  stringstream logMessage;
+ 
+  for (auto assignment : assignments_)
+  {
+    logMessage << "Year: " << assignment.getAssignedYear() << endl;
+    logMessage << "Department: " << assignment.getAssignedDepartment() << endl;
+ 
+    for (const auto& teacher : assignment.getAssignedTeachers())
+    {
+      logMessage << "Assigned teacher: " << teacher << endl;
+    }
+  }
+  logger_.appendLog(M_INFO,
+                    M_LOG_ENABLED,
+                    (string)"LOG.11: school.cpp school::showTeachersAssignment()" +
+                    logMessage.str());
 }
