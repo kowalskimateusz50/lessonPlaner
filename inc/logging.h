@@ -9,8 +9,7 @@
 #include <ctime>
 #include <filesystem>
 
-using namespace std;
-namespace fs = filesystem;
+namespace fs = std::filesystem;
 
 /* Define types of messages */
 #define M_INFO 1
@@ -38,7 +37,7 @@ class Logging
     Logging(bool isLogModeOn,
                       bool isLogToConsoleOn,
                       bool isLogToFileOn,
-                      string logFolderPath);
+                      std::string logFolderPath);
     /**
      * @brief 
      * 
@@ -46,10 +45,10 @@ class Logging
      * @param isLogEnabled 
      * @param logMessage 
      */
-    void appendLog(int logType, int isLogEnabled, string logMessage);
+    void appendLog(int logType, int isLogEnabled, std::string logMessage);
 
 	private:
-		mutex mLock_;
+		std::mutex mLock_;
 
 		time_t tTime;
 	  tm* localTime;
@@ -57,13 +56,13 @@ class Logging
     bool isLogModeOn_;
     bool isLogToConsoleOn_;
     bool isLogToFileOn_;
-		string logFolderPath_;
+		std::string logFolderPath_;
 
-	  string logFileName;
-		string logFilePath;
+	  std::string logFileName;
+		std::string logFilePath;
 
-		fstream logFile;
+		std::fstream logFile;
 
-		string addLeadingZero(int number);
-		string getMessageType(int type);
+		std::string addLeadingZero(int number);
+		std::string getMessageType(int type);
 };

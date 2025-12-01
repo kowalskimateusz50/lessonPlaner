@@ -19,7 +19,7 @@ int school::readTeachersAvailability()
 {
   int teachersCounter = 0;
   uint rowPointer = 2;
-  stringstream logMessage;
+  std::stringstream logMessage;
   teacher readTeacher(wks_, rowPointer, logger_);
 
   while (readTeacher.readAvailability())
@@ -33,7 +33,7 @@ int school::readTeachersAvailability()
 
   logger_.appendLog(M_INFO,
                     M_LOG_ENABLED, 
-                    (string)"LOG.2: school.cpp school::readTeachersAvailability()" +
+                    (std::string)"LOG.2: school.cpp school::readTeachersAvailability()" +
                     logMessage.str());
 
   return teachersCounter;
@@ -61,7 +61,7 @@ int school::readDepartmentsAvailability()
 {
   departmentsCounter = 0;
   uint rowPointer = 2;
-  stringstream logMessage;
+  std::stringstream logMessage;
   department readDepartment(wks_, rowPointer, logger_);
 
   while (readDepartment.readAvailability())
@@ -74,7 +74,7 @@ int school::readDepartmentsAvailability()
 
   logger_.appendLog(M_INFO,
                     M_LOG_ENABLED,
-                    (string)"LOG.8: school.cpp school::readDepartmentsAvailability()" +
+                    (std::string)"LOG.8: school.cpp school::readDepartmentsAvailability()" +
                     logMessage.str());
 
   return departmentsCounter;
@@ -96,7 +96,7 @@ int school::readTeachersAssignment()
 {
   assignmentsCounter = 0;
   uint rowPointer = 3;
-  stringstream logMessage;
+  std::stringstream logMessage;
   TeacherAssigner readTeacherAssignment(wks_, rowPointer, logger_);
   while (readTeacherAssignment.readAssignment())
   {
@@ -129,7 +129,7 @@ int school::readTeachersAssignment()
 
 void school::showTeachersAssignment()
 {
-  stringstream logMessage;
+  std::stringstream logMessage;
  
   for (auto assignment : assignments_)
   {

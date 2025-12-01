@@ -4,16 +4,13 @@
 #include <logging.h>
 #include <OpenXLSX.hpp>
 
-using namespace std;
-using namespace OpenXLSX;
-
 class TeacherAssigner
 {
   private:
 
     uint year_;
-    string department_;
-    vector<string> assignedTeachers_;
+    std::string department_;
+    std::vector<std::string> assignedTeachers_;
 
     struct Settings 
     {
@@ -21,9 +18,9 @@ class TeacherAssigner
       uint maxDepartmentLength;
       uint minTeacherInitialsLength;
       uint maxTeacherInitialsLength;
-      string yearColumn;
-      string departmentColumn;
-      string assignedTeacherColumn1;
+      std::string yearColumn;
+      std::string departmentColumn;
+      std::string assignedTeacherColumn1;
       char asignedTeachersBeginCol;
       char asignedTeachersEndCol;
       uint maxNoAssignedTeachers;
@@ -43,6 +40,6 @@ class TeacherAssigner
     void showAssignment();
     bool isAssignmentValid();
     uint getAssignedYear();
-    string getAssignedDepartment();
-    const vector<string>& getAssignedTeachers() const;
+    std::string getAssignedDepartment();
+    const std::vector<std::string>& getAssignedTeachers() const;
 };

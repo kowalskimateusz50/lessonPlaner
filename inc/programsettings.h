@@ -5,8 +5,6 @@
 #include <fstream>
 #include <logging.h>
 
-using namespace std;
-
 namespace programConfig {
     constexpr int initialsBeginningRow = 2;
 }
@@ -14,11 +12,11 @@ namespace programConfig {
 class ProgramSettings
 {
   private:
-    string inputFilePath_;
+    std::string inputFilePath_;
     bool isLogModeOn_;
     bool isLogToConsoleOn_;
     bool isLogToFileOn_;
-    string logFilePath_;
+    std::string logFilePath_;
 
     enum class settingsFileLines
     {
@@ -33,8 +31,8 @@ class ProgramSettings
     bool isLogModeOn();
     bool isLogToConsoleOn();
     bool isLogToFileOn();
-    string getInputFilePath();
-    string getLogFilePath();
+    std::string getInputFilePath();
+    std::string getLogFilePath();
 };
 
 enum class wksColumns 

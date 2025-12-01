@@ -3,7 +3,7 @@
 Logging::Logging(bool isLogModeOn,
                  bool isLogToConsoleOn,
                  bool isLogToFileOn, 
-                 string logFolderPath)
+                 std::string logFolderPath)
 {
 	/* Save log foler path into class */
   isLogModeOn_ = isLogModeOn;
@@ -14,38 +14,38 @@ Logging::Logging(bool isLogModeOn,
 	/* Create new local folder if doesn't exist */
     if (fs::create_directories(logFolderPath_))
     {
-      cout << "Folder created.\n";
+      std::cout << "Folder created.\n";
     }
     else
     {
-      cout << "Folder already exist.\n";
+      std::cout << "Folder already exist.\n";
     }
 }
 
-void Logging::appendLog(int logType, int isLogEnabled, string logMessage)
+void Logging::appendLog(int logType, int isLogEnabled, std::string logMessage)
 {
-  stringstream sslogMessage;
+  std::stringstream sslogMessage;
   if (isLogModeOn_ && isLogEnabled)
   {
     mLock_.lock();
     tTime = time(0);
 	  localTime = localtime(&tTime);
 
-    sslogMessage << getMessageType(logType) + "[" + to_string(localTime->tm_mday) + "/" + 
-      addLeadingZero(localTime->tm_mon) + "/" + to_string(1900 + localTime->tm_year) + " " + 
+    sslogMessage << getMessageType(logType) + "[" + std::to_string(localTime->tm_mday) + "/" + 
+      addLeadingZero(localTime->tm_mon) + "/" + std::to_string(1900 + localTime->tm_year) + " " + 
         addLeadingZero(localTime->tm_hour) + ":" + addLeadingZero(localTime->tm_min) + ":" + 
-          addLeadingZero(localTime->tm_sec) + "]" + ": " + logMessage << endl;
+          addLeadingZero(localTime->tm_sec) + "]" + ": " + logMessage << std::endl;
 
     if (isLogToConsoleOn_)
     {
-      cout << sslogMessage.str();
+      std::cout << sslogMessage.str();
     }
 
     if (isLogToFileOn_)
     {
       /* Prepare date for filename creation*/
-      logFileName = to_string(1900 + localTime->tm_year) + addLeadingZero(localTime->tm_mon) + 
-        to_string(localTime->tm_mday);
+      logFileName = std::to_string(1900 + localTime->tm_year) + addLeadingZero(localTime->tm_mon) + 
+        std::to_string(localTime->tm_mday);
       logFilePath = (logFolderPath_ + logFileName + ".txt");
 
       /* File opening */
@@ -60,19 +60,19 @@ void Logging::appendLog(int logType, int isLogEnabled, string logMessage)
     mLock_.unlock();
   }
 }
-string Logging::addLeadingZero(int number)
+std::string Logging::addLeadingZero(int number)
 {
 	if (number < 10)
 	{
-		return ("0" + to_string(number));
+		return ("0" + std::to_string(number));
 	}
 	else
 	{
-		return (to_string(number));
+		return (std::to_string(number));
 	}
 }
 
-string Logging::getMessageType(int type)
+std::string Logging::getMessageType(int type)
 {
 	if (type == 1)
 	{

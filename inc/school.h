@@ -8,9 +8,6 @@
 #include "logging.h"
 #include "teacherassigner.h"
 
-using namespace OpenXLSX;
-using namespace std;
-
 class school
 {
 
@@ -29,9 +26,9 @@ class school
     Logging& logger_;
     OpenXLSX::XLWorksheet& wks_;
 
-    vector<teacher> teachers_;
-    vector<department> departments_;
-    vector<TeacherAssigner> assignments_;
+    std::vector<teacher> teachers_;
+    std::vector<department> departments_;
+    std::vector<TeacherAssigner> assignments_;
 
     uint teachersCounter;
     uint departmentsCounter;

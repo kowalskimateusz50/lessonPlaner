@@ -6,8 +6,6 @@
 #include "availability.h"
 #include "programsettings.h"
 
-using namespace std;
-using namespace OpenXLSX;
 /**
  * @brief Class which describes department
  * 

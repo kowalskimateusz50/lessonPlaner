@@ -24,20 +24,21 @@ bool TeacherAssigner::readAssignment()
   department_ = "";
   assignedTeachers_.clear();
 
-  XLCellAssignable cell = wks_.findCell(settings_.yearColumn + to_string(rowPointer_));
+  OpenXLSX::XLCellAssignable cell = wks_.findCell(settings_.yearColumn + std::to_string(rowPointer_));
   //Check whether there is no end of assignment table
   if (cell.empty())
   {
     return false;
   }
 
-  year_ = wks_.cell(settings_.yearColumn + to_string(rowPointer_)).value().get<uint>();
-  department_ = wks_.cell(settings_.departmentColumn + to_string(rowPointer_)).value().get<string>();
+  year_ = wks_.cell(settings_.yearColumn + std::to_string(rowPointer_)).value().get<uint>();
+  department_ = wks_.cell(settings_.departmentColumn + std::to_string(rowPointer_)).value().get<std::string>();
   //Read teachers in the loop
   for (char i = settings_.asignedTeachersBeginCol; i <= settings_.asignedTeachersEndCol; i++)
   {
-    string rowLetter(1, i);
-    string tempTeacherInitials = wks_.cell(rowLetter + to_string(rowPointer_)).value().get<string>();
+    std::string rowLetter(1, i);
+    std::string tempTeacherInitials = wks_.cell(
+      rowLetter + std::to_string(rowPointer_)).value().get<std::string>();
     if ((tempTeacherInitials != "x"))
     {
       assignedTeachers_.push_back(tempTeacherInitials);
@@ -72,12 +73,12 @@ uint TeacherAssigner::getAssignedYear()
   return year_;
 }
 
-string TeacherAssigner::getAssignedDepartment()
+std::string TeacherAssigner::getAssignedDepartment()
 {
   return department_;
 }
 
-const vector<string>& TeacherAssigner::getAssignedTeachers() const
+const std::vector<std::string>& TeacherAssigner::getAssignedTeachers() const
 {
   return assignedTeachers_;
 }

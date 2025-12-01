@@ -13,11 +13,11 @@ ProgramSettings::ProgramSettings()
 int ProgramSettings::readProgramSettings()
 {
   uint readSettingsStatus = 0;
-  ifstream settingsFile("ustawienia.txt");
+  std::ifstream settingsFile("ustawienia.txt");
   uint lineIterator = 0;
-  string verifyLineContent = "";
-  string verifyLinePattern = "";
-  string line = "";
+  std::string verifyLineContent = "";
+  std::string verifyLinePattern = "";
+  std::string line = "";
 
   if (settingsFile.is_open())
   {
@@ -51,7 +51,7 @@ int ProgramSettings::readProgramSettings()
           }
           if (verifyLineContent == verifyLinePattern && line[line.size() - 1] == '\'')
           {
-            string tmpIsLogModeOn = "";
+            std::string tmpIsLogModeOn = "";
             for (int i = verifyLinePattern.size(); i < (line.size() - 1) ; i++)
             {
               tmpIsLogModeOn += line[i];
@@ -99,12 +99,12 @@ bool ProgramSettings::isLogToFileOn()
   return isLogToFileOn_;
 }
 
-string ProgramSettings::getLogFilePath()
+std::string ProgramSettings::getLogFilePath()
 {
     return logFilePath_;
 }
 
-string ProgramSettings::getInputFilePath()
+std::string ProgramSettings::getInputFilePath()
 {
     return inputFilePath_;
 }

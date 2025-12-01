@@ -7,16 +7,13 @@
 #include <OpenXLSX.hpp>
 #include <vector>
 
-using namespace std;
-using namespace OpenXLSX;
-
 class Availability
 {
   public:
     class availabilitySettings
     {
       public:
-        string initialsColumn;
+        std::string initialsColumn;
         int startColumn;
         int endColumn;
         int minInitialsLength;
@@ -42,7 +39,7 @@ class Availability
     uint& initialsRowPointer_;
 
     availabilitySettings availabilitySettings_;
-    string initials_;
-    vector<vector<int>> availabilityMatrix_;
+    std::string initials_;
+    std::vector<std::vector<int>> availabilityMatrix_;
 };
 
