@@ -32,6 +32,7 @@ class Availability
     int findAndCheckInitials();
     int readAvailabilityMatrix();
     void showAvailability();
+    int countAvailabilityUnits();
 
   protected:
     OpenXLSX::XLWorksheet& wks_;

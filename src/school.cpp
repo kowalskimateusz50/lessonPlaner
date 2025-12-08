@@ -130,7 +130,7 @@ int school::readTeachersAssignment()
 void school::showTeachersAssignment()
 {
   std::stringstream logMessage;
- 
+
   for (auto assignment : assignments_)
   {
     logMessage << "Year: " << assignment.getAssignedYear() << endl;
@@ -145,4 +145,55 @@ void school::showTeachersAssignment()
                     M_LOG_ENABLED,
                     (string)"LOG.11: school.cpp school::showTeachersAssignment()" +
                     logMessage.str());
+}
+
+int school::findLowestAvailableDepartment(std::vector<department>& departments)
+{
+  int lowestAvailabityUnits = departments[0].countAvailabilityUnits();
+  int lowestAvailabityIndex = 0;
+
+  for (int i = 1; i < departments.size(); i++)
+  {
+    if (departments[i].countAvailabilityUnits() < lowestAvailabityUnits)
+    {
+      lowestAvailabityUnits = departments[i].countAvailabilityUnits();
+      lowestAvailabityIndex = i;
+    }
+  }
+  return lowestAvailabityIndex;
+}
+
+bool school::scheduleTimeTable()
+{
+  //Copy local copies of input data as read on
+  std::vector<teacher> availableTeachers = teachers_;
+  std::vector<department> departmentsToSchedule = departments_;
+  std::vector<TeacherAssigner> assignmentsToSchedule = assignments_;
+
+  bool foundPossibleTimeTable = false;
+
+  logger_.appendLog(M_INFO,
+                    M_LOG_ENABLED,
+                    (std::string)"LOG.12: school.cpp school::scheduleTimeTable()");
+
+
+  // Main algorithm loop
+  //while (departmentsToSchedule.size() > 0)
+  //{
+    // 1. Find a department with the lowest availability
+    int indexOfDepartmentToSchedule = findLowestAvailableDepartment(departmentsToSchedule);
+
+    std::stringstream logMessage;
+    logMessage << "Step 1: Find department to schedule: " << indexOfDepartmentToSchedule + 1;
+
+    logger_.appendLog(M_INFO,
+                      M_LOG_ENABLED,
+                      (std::string)"LOG.12: school.cpp school::scheduleTimeTable()" +
+                      logMessage.str());
+
+
+  //}
+
+  
+  return foundPossibleTimeTable;
 }

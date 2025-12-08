@@ -39,7 +39,8 @@ int main()
   schoolInstance.readDepartmentsAvailability();
   schoolInstance.showDepartmentsAvailability();
   schoolInstance.readTeachersAssignment();
-  schoolInstance.showTeachersAssignment(); 
+  schoolInstance.showTeachersAssignment();
+  schoolInstance.scheduleTimeTable();
 
   doc.close();
 

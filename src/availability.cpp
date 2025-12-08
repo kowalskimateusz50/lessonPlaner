@@ -83,13 +83,13 @@ int Availability::readAvailabilityMatrix()
   return 1;
 }
 
-void Availability::showAvailability()
+void Availability::showAvailability() 
 {
   std::stringstream logMessage;
   logMessage << "\nInitials: " << initials_<< std::endl;
 
   //Display availability matrix
-  for (int units = 0; units < availabilitySettings_.maxNoOfAvailableUnits; units++)
+  for (int units = 0; units < availabilitySettings_.maxNoOfAvailableUnits; units++) 
   {
       for (int days = 0; days < availabilitySettings_.maxNoOfAvailableDays; days++)
       {
@@ -103,3 +103,20 @@ void Availability::showAvailability()
                   (std::string)"LOG.7: availability.cpp Availability::showAvailability() " +
                   logMessage.str());
 }
+
+int Availability::countAvailabilityUnits() 
+{
+  int counter = 0;
+  for (int units = 0; units < availabilitySettings_.maxNoOfAvailableUnits; units++) 
+  {
+      for (int days = 0; days < availabilitySettings_.maxNoOfAvailableDays; days++) 
+      {
+          if (availabilityMatrix_[units][days] = 1) 
+          {
+            counter++;
+          }
+      }
+  }
+  return counter;
+}
+

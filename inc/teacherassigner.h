@@ -4,13 +4,17 @@
 #include <logging.h>
 #include <OpenXLSX.hpp>
 
+struct Assignment
+{
+  uint year;
+  std::string department;
+  std::vector<std::string> assignedTeachers;
+};
+
 class TeacherAssigner
 {
   private:
-
-    uint year_;
-    std::string department_;
-    std::vector<std::string> assignedTeachers_;
+    Assignment assignment_;
 
     struct Settings 
     {

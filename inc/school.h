@@ -20,6 +20,8 @@ class school
     void showDepartmentsAvailability();
     int readTeachersAssignment();
     void showTeachersAssignment();
+    bool scheduleTimeTable(); 
+    int findLowestAvailableDepartment(std::vector<department>& departments);
 
   private:
 

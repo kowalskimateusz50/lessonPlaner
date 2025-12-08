@@ -20,9 +20,9 @@ TeacherAssigner::TeacherAssigner(OpenXLSX::XLWorksheet& wks,
 bool TeacherAssigner::readAssignment()
 {
   //Clear values
-  year_ = 0;
-  department_ = "";
-  assignedTeachers_.clear();
+  assignment_.year = 0;
+  assignment_.department = "";
+  assignment_.assignedTeachers.clear();
 
   OpenXLSX::XLCellAssignable cell = wks_.findCell(settings_.yearColumn + std::to_string(rowPointer_));
   //Check whether there is no end of assignment table
@@ -31,8 +31,8 @@ bool TeacherAssigner::readAssignment()
     return false;
   }
 
-  year_ = wks_.cell(settings_.yearColumn + std::to_string(rowPointer_)).value().get<uint>();
-  department_ = wks_.cell(settings_.departmentColumn + std::to_string(rowPointer_)).value().get<std::string>();
+  assignment_.year = wks_.cell(settings_.yearColumn + std::to_string(rowPointer_)).value().get<uint>();
+  assignment_.department = wks_.cell(settings_.departmentColumn + std::to_string(rowPointer_)).value().get<std::string>();
   //Read teachers in the loop
   for (char i = settings_.asignedTeachersBeginCol; i <= settings_.asignedTeachersEndCol; i++)
   {
@@ -41,7 +41,7 @@ bool TeacherAssigner::readAssignment()
       rowLetter + std::to_string(rowPointer_)).value().get<std::string>();
     if ((tempTeacherInitials != "x"))
     {
-      assignedTeachers_.push_back(tempTeacherInitials);
+      assignment_.assignedTeachers.push_back(tempTeacherInitials);
     }
   }
   rowPointer_++;
@@ -50,11 +50,11 @@ bool TeacherAssigner::readAssignment()
 bool TeacherAssigner::isAssignmentValid()
 {
   //Check department year and name
-  if (!((year_ > 0) && 
-       (department_.size() >= settings_.minDepartmentLength) &&
-       (department_.size() <= settings_.maxDepartmentLength) &&
-       (assignedTeachers_.size() > 0) &&
-       (assignedTeachers_.size() <= settings_.maxNoAssignedTeachers)))
+  if (!((assignment_.year > 0) && 
+       (assignment_.department.size() >= settings_.minDepartmentLength) &&
+       (assignment_.department.size() <= settings_.maxDepartmentLength) &&
+       (assignment_.assignedTeachers.size() > 0) &&
+       (assignment_.assignedTeachers.size() <= settings_.maxNoAssignedTeachers)))
   {
     return false;
   }
@@ -64,21 +64,21 @@ bool TeacherAssigner::isAssignmentValid()
 
 void TeacherAssigner::showAssignment()
 {
-
+  
 
 }
 
 uint TeacherAssigner::getAssignedYear()
 {
-  return year_;
+  return assignment_.year;
 }
 
 std::string TeacherAssigner::getAssignedDepartment()
 {
-  return department_;
+  return assignment_.department;
 }
 
 const std::vector<std::string>& TeacherAssigner::getAssignedTeachers() const
 {
-  return assignedTeachers_;
+  return assignment_.assignedTeachers;
 }
