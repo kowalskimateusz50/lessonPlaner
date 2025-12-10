@@ -149,18 +149,26 @@ void school::showTeachersAssignment()
 
 int school::findLowestAvailableDepartment(std::vector<department>& departments)
 {
-  int lowestAvailabityUnits = departments[0].countAvailabilityUnits();
+  int lowestAvailabilityUnits = departments[0].countAvailabilityUnits();
   int lowestAvailabityIndex = 0;
 
   for (int i = 1; i < departments.size(); i++)
   {
-    if (departments[i].countAvailabilityUnits() < lowestAvailabityUnits)
+    int countAvailabilityUnits = departments[i].countAvailabilityUnits();
+    if (countAvailabilityUnits < lowestAvailabilityUnits)
     {
-      lowestAvailabityUnits = departments[i].countAvailabilityUnits();
+      lowestAvailabilityUnits = departments[i].countAvailabilityUnits();
       lowestAvailabityIndex = i;
     }
   }
   return lowestAvailabityIndex;
+}
+
+int school::findSuitableUnit(
+                             std::vector<teacher> availableTeachers,
+                                    )
+{
+
 }
 
 bool school::scheduleTimeTable()
@@ -184,12 +192,16 @@ bool school::scheduleTimeTable()
     int indexOfDepartmentToSchedule = findLowestAvailableDepartment(departmentsToSchedule);
 
     std::stringstream logMessage;
-    logMessage << "Step 1: Find department to schedule: " << indexOfDepartmentToSchedule + 1;
+    logMessage << "Step 1: Find department to schedule: " << indexOfDepartmentToSchedule ;
 
     logger_.appendLog(M_INFO,
                       M_LOG_ENABLED,
                       (std::string)"LOG.12: school.cpp school::scheduleTimeTable()" +
                       logMessage.str());
+    
+    // 2. Find a unit suitable for this class
+
+
 
 
   //}

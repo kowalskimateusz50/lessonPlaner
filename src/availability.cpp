@@ -111,7 +111,7 @@ int Availability::countAvailabilityUnits()
   {
       for (int days = 0; days < availabilitySettings_.maxNoOfAvailableDays; days++) 
       {
-          if (availabilityMatrix_[units][days] = 1) 
+          if (availabilityMatrix_[units][days] == 1) 
           {
             counter++;
           }

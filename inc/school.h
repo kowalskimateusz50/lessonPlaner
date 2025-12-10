@@ -32,6 +32,8 @@ class school
     std::vector<department> departments_;
     std::vector<TeacherAssigner> assignments_;
 
+    std::vector<std::vector<Assignment>> scheduledPlan;
+
     uint teachersCounter;
     uint departmentsCounter;
     uint assignmentsCounter;
