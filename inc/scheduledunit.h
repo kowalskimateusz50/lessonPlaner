@@ -4,13 +4,14 @@
 #include "logging.h"
 #include "teacherassigner.h"
 
-class ScheduleUnit
+class ScheduledUnit
 {
   public:
-    ScheduleUnit();
-
+    ScheduledUnit();
+    bool isScheduled();
+    void scheduleUnit();
 
   private:
     bool isScheduled_;
     Assignment assignment_;
-}
+};

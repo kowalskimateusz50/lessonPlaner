@@ -27,14 +27,16 @@ class Availability
     Availability(OpenXLSX::XLWorksheet& wks,
                  uint& initialsRowPointer,
                  Logging& logger);
-
     int readAvailability();
     int findAndCheckInitials();
     int readAvailabilityMatrix();
     void showAvailability();
     int countAvailabilityUnits();
+    std::string getName();
+    const std::vector<std::vector<int>>& getAvailabilityVector() const;
 
   protected:
+
     OpenXLSX::XLWorksheet& wks_;
     Logging& logger_;
     uint& initialsRowPointer_;
@@ -43,4 +45,3 @@ class Availability
     std::string initials_;
     std::vector<std::vector<int>> availabilityMatrix_;
 };
-

@@ -120,3 +120,14 @@ int Availability::countAvailabilityUnits()
   return counter;
 }
 
+std::string Availability::getName()
+{
+  return initials_;
+}
+
+const std::vector<std::vector<int>>& getAvailabilityVector()
+{
+  return availabilityMatrix_;
+}
+
+

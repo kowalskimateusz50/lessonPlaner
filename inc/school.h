@@ -7,6 +7,7 @@
 #include <OpenXLSX.hpp>
 #include "logging.h"
 #include "teacherassigner.h"
+#include "scheduledunit.h"
 
 class school
 {
@@ -20,8 +21,13 @@ class school
     void showDepartmentsAvailability();
     int readTeachersAssignment();
     void showTeachersAssignment();
-    bool scheduleTimeTable(); 
+    bool scheduleTimeTable();
     int findLowestAvailableDepartment(std::vector<department>& departments);
+    int findSuitableUnit(std::vector<teacher>& teachers,
+                         department department,
+                         std::vector<TeacherAssigner>& assignments,
+                         int unitRowIndex,
+                         int unitColIndex);
 
   private:
 
@@ -32,7 +38,7 @@ class school
     std::vector<department> departments_;
     std::vector<TeacherAssigner> assignments_;
 
-    std::vector<std::vector<Assignment>> scheduledPlan;
+    std::vector<std::vector<ScheduledUnit>> scheduledTimePlan_;
 
     uint teachersCounter;
     uint departmentsCounter;
