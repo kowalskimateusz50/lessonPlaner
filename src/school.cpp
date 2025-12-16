@@ -164,7 +164,7 @@ int school::findLowestAvailableDepartment(std::vector<department>& departments)
   return lowestAvailabityIndex;
 }
 
-int school::findSuitableUnit(std::vector<teacher>& teachers,
+bool school::findSuitableUnit(std::vector<teacher>& teachers,
                              department department,
                              std::vector<TeacherAssigner>& assignments,
                              int& unitRowIndex,
@@ -176,10 +176,10 @@ int school::findSuitableUnit(std::vector<teacher>& teachers,
   std::string departmentName = department.getName();
   for (int i = 0; i < assignments.size(); i++)
   {
-    std::string assigneddepartmentName = std::to_string(assignments[i].getAssignedYear()) + 
+    std::string assignedDepartmentName = std::to_string(assignments[i].getAssignedYear()) + 
       assignments[i].getAssignedDepartment();
 
-    if (departmentName == assigneddepartmentName)
+    if (departmentName == assignedDepartmentName)
     {
       assignedTeachers = assignments[i].getAssignedTeachers();
       break;
@@ -187,23 +187,45 @@ int school::findSuitableUnit(std::vector<teacher>& teachers,
   }
 
   // 2. Prepare department availability and teachers availability
+  std::vector<std::vector<int>> departmentAvailability = department.getAvailabilityVector();
   std::vector<std::vector<std::vector<int>>> teachersAvailability;
 
-  for (int i)
-    getAvailabilityVector()
+  for (int i = 0; i < assignedTeachers.size(); i++)
+  {
+      for (int j = 0; j < teachers.size(); j++)
+      {
+        if (assignedTeachers[i] == teachers[j].getName())
+        {
+          teachersAvailability.emplace_back(teachers[j].getAvailabilityVector());
+        }
+      }
+  }
 
+  uint unitIsSuitableForTeachers = 0;
 
   // 3. Select 1st unit suitable for department and for teachers
-  for (uint row = 0; row < department.size(); row++)
+  for (uint uRow = 0; uRow < departmentAvailability.size(); uRow++)
   {
-    for (uint col = 0; col < department[row].size(); col++)
+    for (uint uCol = 0; uCol < departmentAvailability[uRow].size(); uCol++)
     {
-      if ()
-
+      unitIsSuitableForTeachers = 0;
+      for (int it = 0; it < teachersAvailability.size(); it++)
+      {
+        if ((departmentAvailability[uRow][uCol] == 1) && (teachersAvailability[it][uRow][uCol] == 1))
+        {
+          unitIsSuitableForTeachers++;
+        }
+        if (unitIsSuitableForTeachers == teachersAvailability.size())
+        {
+          unitRowIndex = uRow;
+          unitColIndex = uCol;
+          return true;
+        }
+      }
     }
   }
-  
-  return 0;
+
+  return false;
 }
 
 bool school::scheduleTimeTable()

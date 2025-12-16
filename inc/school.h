@@ -23,12 +23,11 @@ class school
     void showTeachersAssignment();
     bool scheduleTimeTable();
     int findLowestAvailableDepartment(std::vector<department>& departments);
-    int findSuitableUnit(std::vector<teacher>& teachers,
-                         department department,
-                         std::vector<TeacherAssigner>& assignments,
-                         int unitRowIndex,
-                         int unitColIndex);
-
+    bool findSuitableUnit(std::vector<teacher>& teachers,
+                          department department,
+                          std::vector<TeacherAssigner>& assignments,
+                          int& unitRowIndex,
+                          int& unitColIndex);
   private:
 
     Logging& logger_;

@@ -125,7 +125,7 @@ std::string Availability::getName()
   return initials_;
 }
 
-const std::vector<std::vector<int>>& getAvailabilityVector()
+const std::vector<std::vector<int>>& Availability::getAvailabilityVector() const
 {
   return availabilityMatrix_;
 }
