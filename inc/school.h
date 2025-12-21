@@ -3,9 +3,10 @@
 #include <iostream>
 #include <vector>
 #include <array>
+#include <OpenXLSX.hpp>
+#include "programsettings.h"
 #include "department.h"
 #include "teacher.h"
-#include <OpenXLSX.hpp>
 #include "logging.h"
 #include "teacherassigner.h"
 #include "scheduledunit.h"
@@ -15,7 +16,10 @@ class school
 
   public:
 
-    school(OpenXLSX::XLWorksheet& wks, Logging& logger);
+    school(ProgramSettings& settings, Logging& logger);
+    ~school();
+    prepareInputDataFile();
+    prepareOutputDataFile(); 
     int readTeachersAvailability();
     void showTeachersAvailability();
     int readDepartmentsAvailability();
@@ -33,9 +37,12 @@ class school
                           int& unitColIndex,
                           int& assignmentIndex);
   private:
-
+    ProgramSettings& progamSettings_;
     Logging& logger_;
-    OpenXLSX::XLWorksheet& wks_;
+    OpenXLSX::XLDocument inputFile;
+    OpenXLSX::XLWorksheet inputFileWks_;
+    OpenXLSX::XLDocument outputFile_;    
+    OpenXLSX::XLWorksheet outputFileWks_;
 
     std::vector<teacher> teachers_;
     std::vector<department> departments_;

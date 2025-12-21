@@ -14,11 +14,11 @@ Logging::Logging(bool isLogModeOn,
 	/* Create new local folder if doesn't exist */
   if (fs::create_directories(logFolderPath_))
   {
-    std::cout << "Folder created.\n";
+    std::cout << "Folder for log files created.\n";
   }
   else
   {
-    std::cout << "Folder already exist.\n";
+    std::cout << "Log file folder already exist.\n";
   }
 }
 

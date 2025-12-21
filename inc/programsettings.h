@@ -15,14 +15,16 @@ class ProgramSettings
 {
   private:
     std::string inputFilePath_;
+    std::string outputFilePath_;
     bool isLogModeOn_;
     bool isLogToConsoleOn_;
     bool isLogToFileOn_;
     std::string logFilePath_;
 
-    enum class settingsFileLines
+    enum class settingsFileLines : int
     {
       inputFile = 0,
+      outputFile,
       isLogModeOn,
       pathToLogFile
     };
@@ -34,6 +36,7 @@ class ProgramSettings
     bool isLogToConsoleOn();
     bool isLogToFileOn();
     std::string getInputFilePath();
+    std::string getOutputFilePath();
     std::string getLogFilePath();
 };
 

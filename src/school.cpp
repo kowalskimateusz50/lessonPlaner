@@ -1,13 +1,49 @@
 #include "school.h"
 
-school::school(OpenXLSX::XLWorksheet& wks, Logging& logger)
-  : wks_(wks), logger_(logger) // initialization list
+school::school(ProgramSettings& settings, Logging& logger)
+  : programSettings_(progamSettings_), logger_(logger) // initialization list
 {
+  // Open input data file
+  prepareInputDataFile();
+
+
   // Initialize counters
   teachersCounter = 0;
   departmentsCounter = 0;
   assignmentsCounter = 0;
 }
+
+school::~school()
+{
+  //Close input file
+  inputFile_.close();
+
+  //Close output file TODO
+
+}
+
+school::prepareInputDataFile()
+{
+  //Preparing input file
+  inputFile_.open(progamSettings.getInputFilePath());
+  //Open input file worksheet
+  inputFileWks_ = inputFile.workbook().worksheet(1);
+}
+
+school::prepareOutputDataFile()
+{
+  /* Create new local folder if doesn't exist */
+  if (fs::create_directories(logFolderPath_))
+  {
+    std::cout << "Folder for log files created.\n";
+  }
+  else
+  {
+    std::cout << "Log file folder already exist.\n";
+  }
+
+}
+
 /**
  * @brief Funtion to read teacher availability
  *
@@ -20,7 +56,7 @@ int school::readTeachersAvailability()
   int teachersCounter = 0;
   uint rowPointer = 2;
   std::stringstream logMessage;
-  teacher readTeacher(wks_, rowPointer, logger_);
+  teacher readTeacher(inputFileWks_, rowPointer, logger_);
 
   while (readTeacher.readAvailability())
   {
@@ -62,7 +98,7 @@ int school::readDepartmentsAvailability()
   departmentsCounter = 0;
   uint rowPointer = 2;
   std::stringstream logMessage;
-  department readDepartment(wks_, rowPointer, logger_);
+  department readDepartment(inputFileWks_, rowPointer, logger_);
 
   while (readDepartment.readAvailability())
   {
@@ -97,7 +133,7 @@ int school::readTeachersAssignment()
   assignmentsCounter = 0;
   uint rowPointer = 3;
   std::stringstream logMessage;
-  TeacherAssigner readTeacherAssignment(wks_, rowPointer, logger_);
+  TeacherAssigner readTeacherAssignment(inputFileWks_, rowPointer, logger_);
   while (readTeacherAssignment.readAssignment())
   {
     assignmentsCounter++;

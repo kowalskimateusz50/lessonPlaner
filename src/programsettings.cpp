@@ -12,9 +12,9 @@ ProgramSettings::ProgramSettings()
 
 int ProgramSettings::readProgramSettings()
 {
-  uint readSettingsStatus = 0;
+  int readSettingsStatus = 0;
   std::ifstream settingsFile("ustawienia.txt");
-  uint lineIterator = 0;
+  int lineIterator = 0;
   std::string verifyLineContent = "";
   std::string verifyLinePattern = "";
   std::string line = "";
@@ -23,9 +23,9 @@ int ProgramSettings::readProgramSettings()
   {
     while(getline(settingsFile, line))
     {
-      switch (lineIterator)
+      switch (static_cast<settingsFileLines>(lineIterator))
       {
-        case 0:
+        case settingsFileLines::inputFile:
           verifyLineContent = "";
           verifyLinePattern = "plik_wsadowy='";
           for (int i = 0; i < verifyLinePattern.size(); i++)
@@ -42,7 +42,24 @@ int ProgramSettings::readProgramSettings()
           }
           break;
 
-        case 1:
+        case settingsFileLines::outputFile:
+          verifyLineContent = "";
+          verifyLinePattern = "plik_wynikowy='";
+          for (int i = 0; i < verifyLinePattern.size(); i++)
+          {
+            verifyLineContent += line[i];
+          }
+          if (verifyLineContent == verifyLinePattern && line[line.size() - 1] == '\'')
+          {
+            for (int i = verifyLinePattern.size(); i < (line.size() - 1) ; i++)
+            {
+              outputFilePath_ += line[i];
+            }
+            readSettingsStatus++;
+          }
+          break;
+
+        case settingsFileLines::isLogModeOn:
           verifyLineContent = "";
           verifyLinePattern = "tryb_diagnostyczny='";
           for (int i = 0; i < verifyLinePattern.size(); i++)
@@ -56,12 +73,12 @@ int ProgramSettings::readProgramSettings()
             {
               tmpIsLogModeOn += line[i];
             }
-            tmpIsLogModeOn == "true" ? true : false;
+            tmpIsLogModeOn == "aktywny" ? true : false;
             readSettingsStatus++;
           }
           break;
 
-        case 2:
+        case settingsFileLines::pathToLogFile:
           verifyLineContent = "";
           verifyLinePattern = "plik_diagnostyczny='";
           for (int i = 0; i < verifyLinePattern.size(); i++)
@@ -107,4 +124,9 @@ std::string ProgramSettings::getLogFilePath()
 std::string ProgramSettings::getInputFilePath()
 {
     return inputFilePath_;
+}
+
+std::string ProgramSettings::getOutputFilePath()
+{
+    return outputFilePath_;
 }
