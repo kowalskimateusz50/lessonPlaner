@@ -7,6 +7,8 @@
 
 namespace programConfig {
     constexpr int initialsBeginningRow = 2;
+    constexpr int maxNoOfAvailableUnits = 10;
+    constexpr int maxNoOfAvailableDays = 5;
 }
 
 class ProgramSettings

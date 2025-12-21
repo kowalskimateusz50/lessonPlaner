@@ -9,7 +9,8 @@ class ScheduledUnit
   public:
     ScheduledUnit();
     bool isScheduled();
-    void scheduleUnit();
+    void scheduleUnit(Assignment assignment);
+    std::string getUnit();
 
   private:
     bool isScheduled_;

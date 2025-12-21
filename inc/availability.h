@@ -34,6 +34,7 @@ class Availability
     int countAvailabilityUnits();
     std::string getName();
     const std::vector<std::vector<int>>& getAvailabilityVector() const;
+    void storeAvailability(int row, int col, int availabilityStatus);
 
   protected:
 

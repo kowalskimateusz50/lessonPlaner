@@ -62,10 +62,9 @@ bool TeacherAssigner::isAssignmentValid()
   return true;
 }
 
-void TeacherAssigner::showAssignment()
+Assignment TeacherAssigner::getAssignment()
 {
-  
-
+  return assignment_;
 }
 
 uint TeacherAssigner::getAssignedYear()

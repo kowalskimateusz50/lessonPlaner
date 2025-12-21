@@ -41,7 +41,7 @@ class TeacherAssigner
                     uint& rowPointer,
                     Logging& logger);
     bool readAssignment();
-    void showAssignment();
+    Assignment getAssignment();
     bool isAssignmentValid();
     uint getAssignedYear();
     std::string getAssignedDepartment();

@@ -72,8 +72,8 @@ int Availability::readAvailabilityMatrix()
        row++, i++)
   {
     for (int col = availabilitySettings_.startColumn, j = 0;
-        col <= availabilitySettings_.endColumn; 
-        col++, j++)
+         col <= availabilitySettings_.endColumn; 
+         col++, j++)
     {
       auto cell = wks_.cell(OpenXLSX::XLCellReference(row, col));
       availabilityMatrix_[i][j] = cell.value().get<int>();
@@ -109,13 +109,13 @@ int Availability::countAvailabilityUnits()
   int counter = 0;
   for (int units = 0; units < availabilitySettings_.maxNoOfAvailableUnits; units++) 
   {
-      for (int days = 0; days < availabilitySettings_.maxNoOfAvailableDays; days++) 
+    for (int days = 0; days < availabilitySettings_.maxNoOfAvailableDays; days++) 
+    {
+      if (availabilityMatrix_[units][days] == 1) 
       {
-          if (availabilityMatrix_[units][days] == 1) 
-          {
-            counter++;
-          }
+        counter++;
       }
+    }
   }
   return counter;
 }
@@ -128,6 +128,14 @@ std::string Availability::getName()
 const std::vector<std::vector<int>>& Availability::getAvailabilityVector() const
 {
   return availabilityMatrix_;
+}
+
+void Availability::storeAvailability(int row, int col, int availabilityStatus)
+{
+  if (availabilityStatus == 0 || availabilityStatus == 1)
+  {
+    availabilityMatrix_[row][col] = availabilityStatus;
+  }
 }
 
 
