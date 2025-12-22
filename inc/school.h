@@ -16,10 +16,10 @@ class school
 
   public:
 
-    school(ProgramSettings& settings, Logging& logger);
+    school(ProgramSettings& programSettings, Logging& logger);
     ~school();
-    prepareInputDataFile();
-    prepareOutputDataFile(); 
+    void prepareInputDataFile();
+    void prepareOutputDataFile(); 
     int readTeachersAvailability();
     void showTeachersAvailability();
     int readDepartmentsAvailability();
@@ -37,9 +37,9 @@ class school
                           int& unitColIndex,
                           int& assignmentIndex);
   private:
-    ProgramSettings& progamSettings_;
+    ProgramSettings& programSettings_;
     Logging& logger_;
-    OpenXLSX::XLDocument inputFile;
+    OpenXLSX::XLDocument inputFile_;
     OpenXLSX::XLWorksheet inputFileWks_;
     OpenXLSX::XLDocument outputFile_;    
     OpenXLSX::XLWorksheet outputFileWks_;

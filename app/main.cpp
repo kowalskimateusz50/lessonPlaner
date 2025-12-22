@@ -8,20 +8,20 @@ int main()
 {
   //Getting program settings
   ProgramSettings progamSettings;
-  settings.readProgramSettings();
+  progamSettings.readProgramSettings();
 
   //Creating logging class instance and log settings
-  Logging logger(settings.isLogModeOn(),
-                 settings.isLogToConsoleOn(),
-                 settings.isLogToFileOn(),
-                 settings.getLogFilePath());
+  Logging logger(progamSettings.isLogModeOn(),
+                 progamSettings.isLogToConsoleOn(),
+                 progamSettings.isLogToFileOn(),
+                 progamSettings.getLogFilePath());
 
   logger.appendLog(M_INFO,
                    M_LOG_ENABLED,
-                   (std::string)"LOG.1: main.cpp settings.readProgramSettings()" +
-                   " logFilePath=" + settings.getLogFilePath() +
-                   " isLogModeOn=" + to_string(settings.isLogModeOn()) +
-                   " logFilePath=" + settings.getLogFilePath());
+                   (std::string)"LOG.1: main.cpp progamSettings.readProgramSettings()" +
+                   " logFilePath=" + progamSettings.getLogFilePath() +
+                   " isLogModeOn=" + to_string(progamSettings.isLogModeOn()) +
+                   " logFilePath=" + progamSettings.getLogFilePath());
 
   //school instance creation
   school schoolInstance(progamSettings, logger);

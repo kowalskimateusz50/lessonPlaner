@@ -1,11 +1,15 @@
 #include "school.h"
 
-school::school(ProgramSettings& settings, Logging& logger)
-  : programSettings_(progamSettings_), logger_(logger) // initialization list
+namespace fs = std::filesystem;
+
+school::school(ProgramSettings& programSettings, Logging& logger)
+  : programSettings_(programSettings), logger_(logger) // initialization list
 {
   // Open input data file
   prepareInputDataFile();
 
+  // Open output data file
+  prepareOutputDataFile();
 
   // Initialize counters
   teachersCounter = 0;
@@ -19,28 +23,65 @@ school::~school()
   inputFile_.close();
 
   //Close output file TODO
+  outputFile_.close();
 
 }
 
-school::prepareInputDataFile()
+void school::prepareInputDataFile()
 {
   //Preparing input file
-  inputFile_.open(progamSettings.getInputFilePath());
+  inputFile_.open(programSettings_.getInputFilePath());
   //Open input file worksheet
-  inputFileWks_ = inputFile.workbook().worksheet(1);
+  inputFileWks_ = inputFile_.workbook().worksheet(1);
 }
 
-school::prepareOutputDataFile()
+void school::prepareOutputDataFile()
 {
-  /* Create new local folder if doesn't exist */
-  if (fs::create_directories(logFolderPath_))
-  {
-    std::cout << "Folder for log files created.\n";
-  }
-  else
-  {
-    std::cout << "Log file folder already exist.\n";
-  }
+  std::string filePath = programSettings_.getOutputFilePath();
+
+  fs::path filePathObj(filePath);
+
+  fs::path directory = filePathObj.parent_path();
+
+  
+    // Create folder if doesn't exists
+    if (!directory.empty() && !fs::exists(directory))
+    {
+        try
+        {
+            fs::create_directories(directory);
+            std::cout << "Created directory: "<< directory << '\n';
+        }
+        catch (const fs::filesystem_error& e)
+        {
+            std::cerr << "Directory creation failed: "
+                      << e.what() << '\n';
+            return;
+        }
+    }
+
+    // Open and create output wks
+
+    try
+    {
+        outputFile_.create(filePath, true);   // Create new wks
+        outputFile_.open(filePath);     // Open new wks
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Failed to create/open XLSX file: " << e.what() << '\n';
+        return;
+    }
+
+    // Write example data to worksheet
+    outputFileWks_ = outputFile_.workbook().worksheet("Sheet1");
+    outputFileWks_.cell("A1").value() = "Hello OpenXLSX!";
+    outputFileWks_.cell("B1").value() = 123;
+
+    // Save
+    outputFile_.save();
+
+    std::cout << "XLSX file created and written successfully.\n";
 
 }
 
