@@ -10,7 +10,7 @@ teacher::teacher(OpenXLSX::XLWorksheet& wks,
   availabilitySettings_.startColumn = static_cast<int>(wksColumns::C);
   availabilitySettings_.endColumn = static_cast<int>(wksColumns::G);
   availabilitySettings_.minInitialsLength = 2;
-  availabilitySettings_.maxInitialsLength = 2;
+  availabilitySettings_.maxInitialsLength = 3;
   availabilitySettings_.maxNoOfAvailableUnits = 10;
   availabilitySettings_.maxNoOfAvailableDays = 5;
   availabilitySettings_.availabilityMatrixRowOffset = 12;

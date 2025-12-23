@@ -6,7 +6,6 @@
 
 struct Assignment
 {
-  uint year;
   std::string department;
   std::vector<std::string> assignedTeachers;
 };
@@ -43,7 +42,6 @@ class TeacherAssigner
     bool readAssignment();
     Assignment getAssignment();
     bool isAssignmentValid();
-    uint getAssignedYear();
     std::string getAssignedDepartment();
     const std::vector<std::string>& getAssignedTeachers() const;
 };

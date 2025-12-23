@@ -73,16 +73,6 @@ void school::prepareOutputDataFile()
         return;
     }
 
-    // Write example data to worksheet
-    outputFileWks_ = outputFile_.workbook().worksheet("Sheet1");
-    outputFileWks_.cell("A1").value() = "Hello OpenXLSX!";
-    outputFileWks_.cell("B1").value() = 123;
-
-    // Save
-    outputFile_.save();
-
-    std::cout << "XLSX file created and written successfully.\n";
-
 }
 
 /**
@@ -180,7 +170,6 @@ int school::readTeachersAssignment()
     assignmentsCounter++;
 
     logMessage << "Found new assignment, no.: " << assignmentsCounter << endl;
-    logMessage << "Year: " << readTeacherAssignment.getAssignedYear() << endl;
     logMessage << "Department: " << readTeacherAssignment.getAssignedDepartment() << endl;
  
     for (const auto& teacher : readTeacherAssignment.getAssignedTeachers())
@@ -210,7 +199,6 @@ void school::showTeachersAssignment()
 
   for (auto assignment : assignments_)
   {
-    logMessage << "Year: " << assignment.getAssignedYear() << endl;
     logMessage << "Department: " << assignment.getAssignedDepartment() << endl;
  
     for (const auto& teacher : assignment.getAssignedTeachers())
@@ -240,11 +228,9 @@ int school::findLowestAvailableDepartment(std::vector<department>& departments)
   }
   return lowestAvailabityIndex;
 }
-template <typename T, std::size_t N>
 bool school::findSuitableUnit(std::vector<teacher>& teachers,
               department department,
               std::vector<TeacherAssigner>& assignments,
-              std::array<T, N>& scheduledTimeplan,
               int& unitRowIndex,
               int& unitColIndex,
               int& assignmentIndex)
@@ -257,10 +243,7 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
   std::string departmentName = department.getName();
   for (int i = 0; i < assignments.size(); i++)
   {
-    std::string assignedDepartmentName = std::to_string(assignments[i].getAssignedYear()) + 
-      assignments[i].getAssignedDepartment();
-
-    if (departmentName == assignedDepartmentName)
+    if (departmentName == assignments[i].getAssignedDepartment())
     {
       assignedTeachers = assignments[i].getAssignedTeachers();
       assignmentIndex = i;
@@ -290,7 +273,7 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
   {
     for (uint uCol = 0; uCol < departmentAvailability[uRow].size(); uCol++)
     {
-      if (!scheduledTimeplan[uRow][uCol].isScheduled())
+      if (!scheduledTimeplan_[uRow][uCol].isScheduled())
       {
         unitIsSuitableForTeachers = 0;
         for (int it = 0; it < teachersAvailability.size(); it++)
@@ -358,12 +341,11 @@ bool school::scheduleTimeTable()
       int colOfSuitableUnit = 0;
       int assignmentIndex = 0;
       if (findSuitableUnit(teachers,
-                          departments[indexOfDepartmentToSchedule],
-                          assignments,
-                          scheduledTimeplan_,
-                          rowOfSuitableUnit,
-                          colOfSuitableUnit,
-                          assignmentIndex))
+                           departments[indexOfDepartmentToSchedule],
+                           assignments,
+                           rowOfSuitableUnit,
+                           colOfSuitableUnit,
+                           assignmentIndex))
       {
         foundPossibleTimeTable = true;
 
@@ -392,4 +374,36 @@ bool school::scheduleTimeTable()
                       logMessage.str());
   //}
   return foundPossibleTimeTable;
+}
+
+int school::writeScheduledTimeplan()
+{
+
+  // Write example data to worksheet
+  outputFileWks_ = outputFile_.workbook().worksheet("Sheet1");
+  
+  constexpr char startLetter = 'A';
+  constexpr int startRow = 1;
+
+  for (std::size_t row = 0; row < scheduledTimeplan_.size(); row++)
+  {
+    for (std::size_t col = 0; col < scheduledTimeplan_[row].size(); col++)
+    {
+      char letter = static_cast<char>(startLetter + col);
+      int rowIndex = static_cast<int>(startRow + row);
+      std::string cell = std::string(1, letter) + std::to_string(rowIndex);
+      if (scheduledTimeplan_[row][col].isScheduled())
+      {
+        outputFileWks_.cell(cell).value() = scheduledTimeplan_[row][col].getUnit();
+      }
+      else
+      {
+        outputFileWks_.cell(cell).value() = "";
+      }
+    }
+  }
+
+  // Save file
+  outputFile_.save();
+  return 1;
 }

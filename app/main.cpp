@@ -41,5 +41,7 @@ int main()
   
   schoolInstance.scheduleTimeTable();
 
+  schoolInstance.writeScheduledTimeplan();
+
   return 0;
 }

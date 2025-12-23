@@ -10,7 +10,7 @@ department::department(OpenXLSX::XLWorksheet& wks,
   availabilitySettings_.startColumn = static_cast<int>(wksColumns::J);
   availabilitySettings_.endColumn = static_cast<int>(wksColumns::N);
   availabilitySettings_.minInitialsLength = 2;
-  availabilitySettings_.maxInitialsLength = 4;
+  availabilitySettings_.maxInitialsLength = 5;
   availabilitySettings_.maxNoOfAvailableUnits = 10;
   availabilitySettings_.maxNoOfAvailableDays = 5;
   availabilitySettings_.availabilityMatrixRowOffset = 12;

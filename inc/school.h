@@ -28,14 +28,14 @@ class school
     void showTeachersAssignment();
     bool scheduleTimeTable();
     int findLowestAvailableDepartment(std::vector<department>& departments);
-    template <typename T, std::size_t N>
     bool findSuitableUnit(std::vector<teacher>& teachers,
                           department department,
                           std::vector<TeacherAssigner>& assignments,
-                          std::array<T, N>& scheduledTimeplan,
                           int& unitRowIndex,
                           int& unitColIndex,
                           int& assignmentIndex);
+    int writeScheduledTimeplan();
+
   private:
     ProgramSettings& programSettings_;
     Logging& logger_;
