@@ -10,12 +10,13 @@ class ScheduledUnit
   public:
     ScheduledUnit();
     bool isScheduled();
-    bool isFull();
+    bool isFull(std::size_t noOfAssignedTeachers);
     bool hasThisTeacher(std::string teacherName);
     void scheduleUnit(Assignment assignment);
     std::string getUnit();
 
   private:
     bool isScheduled_;
+    uint noOfAssignedTeachers_;
     std::vector<Assignment> assignments_;
 };

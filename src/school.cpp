@@ -177,6 +177,9 @@ int school::readTeachersAssignment()
   {
     assignmentsCounter++;
 
+    //Clear stringstream
+    logMessage.str("");
+
     logMessage << "Found new assignment, no.: " << assignmentsCounter << endl;
     logMessage << "Department: " << readTeacherAssignment.getAssignedDepartment() << endl;
  
@@ -221,7 +224,7 @@ void school::showTeachersAssignment()
 }
 
 int school::findLowestAvailableDepartment(
-  const std::vector<std::unique_ptr<department>>& departments)
+  std::vector<std::unique_ptr<department>>& departments)
 {
   int lowestAvailabilityUnits = departments[0]->countAvailabilityUnits();
   int lowestAvailabityIndex = 0;
@@ -267,14 +270,14 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
 
   for (int i = 0; i < assignedTeachers.size(); i++)
   {
-      for (int j = 0; j < teachers.size(); j++)
+    for (int j = 0; j < teachers.size(); j++)
+    {
+      if (assignedTeachers[i] == teachers[j].getName())
       {
-        if (assignedTeachers[i] == teachers[j].getName())
-        {
-          teachersAvailability.emplace_back(teachers[j].getAvailabilityVector());
-          teachersNames.emplace_back(teachers[j].getName());
-        }
+        teachersAvailability.emplace_back(teachers[j].getAvailabilityVector());
+        teachersNames.emplace_back(teachers[j].getName());
       }
+    }
   }
 
   uint unitIsSuitableForTeachers = 0;
@@ -284,7 +287,7 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
   {
     for (uint uCol = 0; uCol < departmentAvailability[uRow].size(); uCol++)
     {
-      if (!scheduledTimeplan_[uRow][uCol].isFull())
+      if (!scheduledTimeplan_[uRow][uCol].isFull(assignedTeachers.size()))
       {
         unitIsSuitableForTeachers = 0;
         for (int it = 0; it < teachersAvailability.size(); it++)

@@ -28,7 +28,7 @@ class school
     void showTeachersAssignment();
     bool scheduleTimeTable();
     int findLowestAvailableDepartment(
-      const std::vector<std::unique_ptr<department>>& departments);
+      std::vector<std::unique_ptr<department>>& departments);
     bool findSuitableUnit(std::vector<teacher>& teachers,
                           department& department,
                           std::vector<TeacherAssigner>& assignments,
