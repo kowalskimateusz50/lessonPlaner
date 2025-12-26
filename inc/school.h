@@ -27,15 +27,15 @@ class school
     int readTeachersAssignment();
     void showTeachersAssignment();
     bool scheduleTimeTable();
-    int findLowestAvailableDepartment(
-      std::vector<std::unique_ptr<department>>& departments);
+    int findLowestAvailableDepartment(std::vector<department>& departments);
     bool findSuitableUnit(std::vector<teacher>& teachers,
-                          department& department,
+                          department department,
                           std::vector<TeacherAssigner>& assignments,
                           int& unitRowIndex,
                           int& unitColIndex,
                           int& assignmentIndex);
     int writeScheduledTimeplan();
+    uint countNotScheduledDepartments(std::vector<department>& departments);
 
   private:
     ProgramSettings& programSettings_;
@@ -46,7 +46,7 @@ class school
     OpenXLSX::XLWorksheet outputFileWks_;
 
     std::vector<teacher> teachers_;
-    std::vector<std::unique_ptr<department>> departments_;
+    std::vector<department> departments_;
     std::vector<TeacherAssigner> assignments_;
 
     std::array<std::array<ScheduledUnit, programConfig::maxNoOfAvailableDays>, 

@@ -18,6 +18,11 @@ class department  : public Availability
     department(OpenXLSX::XLWorksheet& wks,
                uint& initialsRowPointer,
                Logging& logger);
+    bool isScheduled();
+    void setScheduledStatus(bool isScheduled);
+
+  private:
+    bool isScheduled_;
 
 };
 

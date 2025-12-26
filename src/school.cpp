@@ -129,30 +129,22 @@ int school::readDepartmentsAvailability()
   departmentsCounter = 0;
   uint rowPointer = 2;
   std::stringstream logMessage;
+  department readDepartment(inputFileWks_, rowPointer, logger_);
 
-  while (true)
+  while (readDepartment.readAvailability())
   {
-    auto departmentPtr =
-        std::make_unique<department>(inputFileWks_, rowPointer, logger_);
-
-      if (!departmentPtr->readAvailability())
-          break;
-
-      departments_.push_back(std::move(departmentPtr));
-
     departmentsCounter++;
-    logMessage << "\nFound department No.: " << departmentsCounter;
+    departments_.push_back(readDepartment);
+    logMessage << "\nFound department No.: " << departmentsCounter << endl;
   }
+  logMessage << "\nStopped searching departments: " << departmentsCounter << endl;
 
-  logMessage << "\nStopped searching departments: " << departmentsCounter;
+  logger_.appendLog(M_INFO,
+                    M_LOG_ENABLED,
+                    (std::string)"LOG.8: school.cpp school::readDepartmentsAvailability()" +
+                    logMessage.str());
 
-  logger_.appendLog(
-    M_INFO,
-    M_LOG_ENABLED,
-    "LOG.8: school.cpp school::readDepartmentsAvailability()" + logMessage.str()
-);
-
-return departmentsCounter;
+  return departmentsCounter;
 }
 
 /**
@@ -161,9 +153,9 @@ return departmentsCounter;
  */
 void school::showDepartmentsAvailability()
 {
-  for (std::size_t i = 0; i < departments_.size(); i++)
+  for (auto& department : departments_)
   {
-    departments_[i]->showAvailability();
+    department.showAvailability();
   }
 }
 
@@ -223,25 +215,26 @@ void school::showTeachersAssignment()
                     logMessage.str());
 }
 
-int school::findLowestAvailableDepartment(
-  std::vector<std::unique_ptr<department>>& departments)
+int school::findLowestAvailableDepartment(std::vector<department>& departments)
 {
-  int lowestAvailabilityUnits = departments[0]->countAvailabilityUnits();
+  //Here is fault, we are always choosing departments[0], despite is scheduled.
+
+  int lowestAvailabilityUnits = departments[0].countAvailabilityUnits();
   int lowestAvailabityIndex = 0;
 
   for (int i = 1; i < departments.size(); i++)
   {
-    int countAvailabilityUnits = departments[i]->countAvailabilityUnits();
-    if (countAvailabilityUnits < lowestAvailabilityUnits)
+    int countAvailabilityUnits = departments[i].countAvailabilityUnits();
+    if ((countAvailabilityUnits < lowestAvailabilityUnits) && (!departments[i].isScheduled()))
     {
-      lowestAvailabilityUnits = departments[i]->countAvailabilityUnits();
+      lowestAvailabilityUnits = countAvailabilityUnits;
       lowestAvailabityIndex = i;
     }
   }
   return lowestAvailabityIndex;
 }
 bool school::findSuitableUnit(std::vector<teacher>& teachers,
-              department& department,
+              department department,
               std::vector<TeacherAssigner>& assignments,
               int& unitRowIndex,
               int& unitColIndex,
@@ -253,6 +246,7 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
   // 1. Get indexes of teachers related to departments
   std::vector<std::string> assignedTeachers;
   std::string departmentName = department.getName();
+
   for (int i = 0; i < assignments.size(); i++)
   {
     if (departmentName == assignments[i].getAssignedDepartment())
@@ -292,14 +286,14 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
         unitIsSuitableForTeachers = 0;
         for (int it = 0; it < teachersAvailability.size(); it++)
         {
-          if ((departmentAvailability[uRow][uCol] == 1) && 
-              ((teachersAvailability[it][uRow][uCol] == 1) || 
+          if ((departmentAvailability[uRow][uCol] == 1) &&
+              ((teachersAvailability[it][uRow][uCol] == 1) ||
                (scheduledTimeplan_[uRow][uCol].hasThisTeacher(teachersNames[it]))))
           {
             unitIsSuitableForTeachers++;
           }
         }
-        if (unitIsSuitableForTeachers == teachersAvailability.size())
+        if (unitIsSuitableForTeachers >= teachersAvailability.size())
         {
           unitRowIndex = uRow;
           unitColIndex = uCol;
@@ -324,14 +318,16 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
   return false;
 }
 
+
 bool school::scheduleTimeTable()
 {
   // Copy local copies of input data as read on
   std::vector<teacher> teachers = teachers_;
-  //std::vector<std::unique_ptr<department>> departments = departments_;
+  std::vector<department> departments = departments_;
   std::vector<TeacherAssigner> assignments = assignments_;
 
   bool foundPossibleTimeTable = false;
+  uint failedScheduled = 0;
 
   logger_.appendLog(M_INFO,
                     M_LOG_ENABLED,
@@ -339,56 +335,57 @@ bool school::scheduleTimeTable()
 
   // Main algorithm loop
   // For first test run loop will be disabled and only one run will be performed
-  while (departments_.size() > 0)
+  while (countNotScheduledDepartments(departments) > 0)
   {
     // 1. Find a department with the lowest availability
-    int indexOfDepartmentToSchedule = findLowestAvailableDepartment(departments_);
+    int indexOfDepartmentToSchedule = findLowestAvailableDepartment(departments);
 
     std::stringstream logMessage;
-    
-    if (indexOfDepartmentToSchedule > 0)
+  
+    logMessage << "Step 1: Found department to schedule: " << 
+      indexOfDepartmentToSchedule << std::endl;
+
+    // 2. Find a unit suitable for this class and schedule unit
+    int rowOfSuitableUnit = 0;
+    int colOfSuitableUnit = 0;
+    int assignmentIndex = 0;
+    if (findSuitableUnit(teachers,
+                          departments[indexOfDepartmentToSchedule],
+                          assignments,
+                          rowOfSuitableUnit,
+                          colOfSuitableUnit,
+                          assignmentIndex))
     {
-      logMessage << "Step 1: Found department to schedule: " << 
-        indexOfDepartmentToSchedule << std::endl;
+      foundPossibleTimeTable = true;
 
-      // 2. Find a unit suitable for this class and schedule unit
-      int rowOfSuitableUnit = 0;
-      int colOfSuitableUnit = 0;
-      int assignmentIndex = 0;
-      if (findSuitableUnit(teachers,
-                           *departments_[indexOfDepartmentToSchedule],
-                           assignments,
-                           rowOfSuitableUnit,
-                           colOfSuitableUnit,
-                           assignmentIndex))
-      {
-        foundPossibleTimeTable = true;
+      // Assign timeplan unit
+      scheduledTimeplan_[rowOfSuitableUnit][colOfSuitableUnit].scheduleUnit(
+        assignments_[assignmentIndex].getAssignment());
 
-        // Assign timeplan unit
-        scheduledTimeplan_[rowOfSuitableUnit][colOfSuitableUnit].scheduleUnit(
-          assignments_[assignmentIndex].getAssignment());
-
-        logMessage << "Step 2: Found suitable unit to schedule: " << 
-          "row: " << rowOfSuitableUnit << " col: " << colOfSuitableUnit << endl <<
-            "scheduled unit: " << scheduledTimeplan_[rowOfSuitableUnit][colOfSuitableUnit].getUnit();
-      }
-      else
-      {
-        foundPossibleTimeTable = false;
-        logMessage << "Step 2: FAILED: Unit suitable to schedule wasn't found: ";
-      }
+      logMessage << "Step 2: Found suitable unit to schedule: " << 
+        "row: " << rowOfSuitableUnit << " col: " << colOfSuitableUnit << endl <<
+          "scheduled unit: " << scheduledTimeplan_[rowOfSuitableUnit][colOfSuitableUnit].getUnit();
+      
+      departments[indexOfDepartmentToSchedule].setScheduledStatus(true);
     }
     else
     {
-      logMessage << "Step 1: FAILED: Department to schedule wasn't found: ";
+      foundPossibleTimeTable = false;
+      logMessage << "Step 2: FAILED: Unit suitable to schedule wasn't found: ";
+      failedScheduled++;
     }
+
 
     logger_.appendLog(M_INFO,
                       M_LOG_ENABLED,
                       (std::string)"LOG.12: school.cpp school::scheduleTimeTable()" +
                       logMessage.str());
 
-    departments_.erase(departments_.begin() + static_cast<std::size_t>(indexOfDepartmentToSchedule));
+    // Debug logic to allow 2 try and break loop
+    if (failedScheduled > 1)
+    {
+      break;
+    }
 
   }
 
@@ -425,4 +422,17 @@ int school::writeScheduledTimeplan()
   // Save file
   outputFile_.save();
   return 1;
+}
+
+uint school::countNotScheduledDepartments(std::vector<department>& departments)
+{
+  uint counter = 0;
+  for (auto& department : departments)
+  {
+    if (!department.isScheduled())
+    {
+      counter++;
+    }
+  }
+  return counter;
 }
