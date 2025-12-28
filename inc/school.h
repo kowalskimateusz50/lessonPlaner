@@ -27,13 +27,13 @@ class school
     int readTeachersAssignment();
     void showTeachersAssignment();
     bool scheduleTimeTable();
-    int findLowestAvailableDepartment(std::vector<department>& departments);
+    uint findLowestAvailableDepartment(std::vector<department>& departments);
     bool findSuitableUnit(std::vector<teacher>& teachers,
                           department department,
                           std::vector<TeacherAssigner>& assignments,
-                          int& unitRowIndex,
-                          int& unitColIndex,
-                          int& assignmentIndex);
+                          uint& unitRowIndex,
+                          uint& unitColIndex,
+                          uint& assignmentIndex);
     int writeScheduledTimeplan();
     uint countNotScheduledDepartments(std::vector<department>& departments);
 

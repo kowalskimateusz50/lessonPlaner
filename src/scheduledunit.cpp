@@ -4,6 +4,7 @@ ScheduledUnit::ScheduledUnit()
 {
   // Initialize with empty values
   isScheduled_ = false;
+  noOfAssignedTeachers_ = 0;
 }
 
 bool ScheduledUnit::isScheduled()
@@ -14,7 +15,7 @@ bool ScheduledUnit::isScheduled()
 bool ScheduledUnit::isFull(std::size_t noOfAssignedTeachers)
 {
   return ((noOfAssignedTeachers_ + static_cast<uint>(noOfAssignedTeachers)) >
-          (programConfig::maxNoOfAssignmentsInUnit));
+          (programConfig::maxNoOfTeachersInUnit));
 }
 
 bool ScheduledUnit::hasThisTeacher(std::string teacherName)
@@ -36,7 +37,7 @@ bool ScheduledUnit::hasThisTeacher(std::string teacherName)
 void ScheduledUnit::scheduleUnit(Assignment assignment)
 {
   if ((noOfAssignedTeachers_ + assignment.assignedTeachers.size()) <= 
-        programConfig::maxNoOfAssignmentsInUnit)
+        programConfig::maxNoOfTeachersInUnit)
   {
     assignments_.push_back(assignment);
     noOfAssignedTeachers_ += assignment.assignedTeachers.size();
