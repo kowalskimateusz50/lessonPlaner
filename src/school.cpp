@@ -374,7 +374,7 @@ bool school::scheduleTimeTable()
           assignments_[assignmentIndex].getAssignment());
 
         logMessage << "Step 2: Found suitable unit to schedule: " << 
-          "row: " << rowOfSuitableUnit << " col: " << colOfSuitableUnit << endl <<
+          "row: " << rowOfSuitableUnit << " col: " << colOfSuitableUnit << std::endl <<
             "scheduled unit: " << scheduledTimeplan_[rowOfSuitableUnit][colOfSuitableUnit].getUnit();
 
         departments[indexOfDepartmentToSchedule].setScheduledStatus(true);
@@ -382,7 +382,8 @@ bool school::scheduleTimeTable()
       else
       {
         foundPossibleTimeTable = false;
-        logMessage << "Step 2: FAILED: Unit suitable to schedule wasn't found: ";
+        logMessage << "Step 2: FAILED: Unit suitable to schedule wasn't found for department: " << 
+        departments[indexOfDepartmentToSchedule].getName();
         failedScheduled++;
       }
 
