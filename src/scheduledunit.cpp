@@ -34,6 +34,18 @@ bool ScheduledUnit::hasThisTeacher(std::string teacherName)
   return false;
 }
 
+bool ScheduledUnit::hasThisDepartment(std::string departmentName)
+{
+  for (auto& assignment : assignments_)
+  {
+    if (assignment.department == departmentName)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
 void ScheduledUnit::scheduleUnit(Assignment assignment)
 {
   if ((noOfAssignedTeachers_ + assignment.assignedTeachers.size()) <= 

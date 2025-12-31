@@ -8,21 +8,34 @@
 
 /**
  * @brief Class which describes department
- * 
+ *
  * 
  *
  */
 class department  : public Availability
 {
   public:
+    enum class State
+    {
+      Idle,
+      ScheduleCombinedUnits,
+      ScheduledCombinedUnits,
+      ScheduleSingleUnit,
+      ScheduledSingleUnit,
+      Scheduled,
+      NotProperlyAssigned,
+      SchedulingImpossible
+    };
+
     department(OpenXLSX::XLWorksheet& wks,
                uint& initialsRowPointer,
                Logging& logger);
-    bool isScheduled();
-    void setScheduledStatus(bool isScheduled);
+    void setState(State state);
+    State getState();
+    std::string stateToString(State state);
 
   private:
-    bool isScheduled_;
+    State state_;
 
 };
 

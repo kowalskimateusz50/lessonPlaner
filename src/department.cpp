@@ -16,14 +16,31 @@ department::department(OpenXLSX::XLWorksheet& wks,
   availabilitySettings_.availabilityMatrixRowOffset = 12;
   availabilitySettings_.initialsToAvailabilityRowOffset = 1;
   // Always initialize department as not scheduled
-  isScheduled_ = false;
+  state_ = State::Idle;
 }
 
-bool department::isScheduled()
+department::State department::getState()
 {
-  return isScheduled_;
+  return state_;
 }
-void department::setScheduledStatus(bool isScheduled)
+
+void department::setState(department::State state)
 {
-  isScheduled_ = isScheduled;
+  state_ = state;
+}
+
+std::string department::stateToString(department::State state)
+{
+  switch (state)
+  {
+    case department::State::Idle: return "Idle";
+    case department::State::ScheduleCombinedUnits: return "ScheduleCombinedUnits";
+    case department::State::ScheduledCombinedUnits: return "ScheduledCombinedUnits";
+    case department::State::ScheduleSingleUnit: return "ScheduleSingleUnit";
+    case department::State::ScheduledSingleUnit: return "ScheduledSingleUnit";
+    case department::State::Scheduled: return "Scheduled";
+    case department::State::NotProperlyAssigned: return "NotProperlyAssigned";
+    case department::State::SchedulingImpossible: return "SchedulingImpossible";
+  }
+  return "Unknown";
 }

@@ -12,6 +12,7 @@ class ScheduledUnit
     bool isScheduled();
     bool isFull(std::size_t noOfAssignedTeachers);
     bool hasThisTeacher(std::string teacherName);
+    bool hasThisDepartment(std::string departmentName);    
     void scheduleUnit(Assignment assignment);
     std::string getUnit();
 
