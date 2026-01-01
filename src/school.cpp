@@ -334,7 +334,9 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
               if ((departmentAvailability[uRow][uCol] == 1) &&
                   (teachersAvailability[it][uRow][uCol] == 1) &&
                   (departmentAvailability[uRow + 1][uCol] == 1) &&
-                  (teachersAvailability[it][uRow + 1][uCol] == 1))
+                  (teachersAvailability[it][uRow + 1][uCol] == 1) && 
+                  (!scheduledTimeplan_[uRow][uCol].hasThisTeacher(assignedTeachers[it])) &&
+                  (!scheduledTimeplan_[uRow + 1][uCol].hasThisTeacher(assignedTeachers[it])))
               {
                 unitIsSuitableForTeachers++;
               }
@@ -392,7 +394,8 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
             for (uint it = 0; it < noOfAssignedTeachers; it++)
             {
               if ((departmentAvailability[uRow][uCol] == 1) &&
-                  ((teachersAvailability[it][uRow][uCol] == 1)))
+                  ((teachersAvailability[it][uRow][uCol] == 1)) &&
+                  (!scheduledTimeplan_[uRow][uCol].hasThisTeacher(assignedTeachers[it])))
               {
                 unitIsSuitableForTeachers++;
               }

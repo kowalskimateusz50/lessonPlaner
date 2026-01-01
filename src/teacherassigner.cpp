@@ -30,7 +30,7 @@ bool TeacherAssigner::readAssignment()
   for (char i = settings_.asignedTeachersBeginCol; i <= settings_.asignedTeachersEndCol; i++)
   {
     std::string rowLetter(1, i);
-    OpenXLSX::XLCellAssignable teacherCell = 
+    OpenXLSX::XLCellAssignable teacherCell =
       wks_.findCell(rowLetter + std::to_string(rowPointer_));
     //Check whether there is no end of assignment table
     if (!teacherCell.empty())
