@@ -397,7 +397,18 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
                   ((teachersAvailability[it][uRow][uCol] == 1)) &&
                   (!scheduledTimeplan_[uRow][uCol].hasThisTeacher(assignedTeachers[it])))
               {
-                unitIsSuitableForTeachers++;
+                // Eliminate situation when department has 3 lessons in row
+                if (uRow > 1)
+                {
+                  if (!scheduledTimeplan_[uRow - 1][uCol].hasThisDepartment(departmentName))
+                  {
+                    unitIsSuitableForTeachers++;
+                  }
+                }
+                else
+                {
+                  unitIsSuitableForTeachers++;
+                }
               }
             }
             if (unitIsSuitableForTeachers == noOfAssignedTeachers)
