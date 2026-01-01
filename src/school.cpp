@@ -87,10 +87,16 @@ int school::readTeachersAvailability()
   int teachersCounter = 0;
   uint rowPointer = 2;
   std::stringstream logMessage;
-  teacher readTeacher(inputFileWks_, rowPointer, logger_);
 
-  while (readTeacher.readAvailability())
+  while (true)
   {
+    teacher readTeacher(inputFileWks_, rowPointer, logger_);
+
+    if (!readTeacher.readAvailability())
+    {
+      break;
+    }
+
     teachersCounter++;
     teachers_.push_back(readTeacher);
     logMessage << "\nFound teacher No.: " << teachersCounter << endl;
@@ -129,10 +135,16 @@ int school::readDepartmentsAvailability()
   departmentsCounter = 0;
   uint rowPointer = 2;
   std::stringstream logMessage;
-  department readDepartment(inputFileWks_, rowPointer, logger_);
 
-  while (readDepartment.readAvailability())
+  while (true)
   {
+    department readDepartment(inputFileWks_, rowPointer, logger_);
+
+    if (!readDepartment.readAvailability())
+    {
+      break;
+    }
+
     departmentsCounter++;
     readDepartment.setState(department::State::ScheduleCombinedUnits);
     departments_.push_back(readDepartment);
@@ -165,13 +177,21 @@ int school::readTeachersAssignment()
   assignmentsCounter = 0;
   uint rowPointer = 3;
   std::stringstream logMessage;
-  TeacherAssigner readTeacherAssignment(inputFileWks_, rowPointer, logger_);
-  while (readTeacherAssignment.readAssignment())
+
+  while (true)
   {
+    TeacherAssigner readTeacherAssignment(inputFileWks_, rowPointer, logger_);
+
+    if (!readTeacherAssignment.readAssignment())
+    {
+      break;
+    }
+
     assignmentsCounter++;
 
-    //Clear stringstream
+    //Clear log stringstream
     logMessage.str("");
+    logMessage.clear();
 
     logMessage << "Found new assignment, no.: " << assignmentsCounter << endl;
     logMessage << "Department: " << readTeacherAssignment.getAssignedDepartment() << endl;
@@ -294,21 +314,27 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
       {
         for (uint uCol = 0; uCol < departmentAvailability[uRow].size(); uCol++)
         {
-          // Verify whether actual unit is not full and unit underneath him
+          /* Debug: scheduling logic: Supress if not used
+          std::string departmentToDebug = "1TAO";
+          if (departmentName == departmentToDebug)
+          {
+            std::cout << "Department debug: " << departmentToDebug;
+          }
+          */
+          // Verify whether actual unit and unit underneath him is not full and has no already
+          // scheduled this department
           if (!(scheduledTimeplan_[uRow][uCol].isFull(noOfAssignedTeachers)) && 
               !(scheduledTimeplan_[uRow + 1][uCol].isFull(noOfAssignedTeachers)) &&
-              !(scheduledTimeplan_[uRow][uCol].hasThisTeacher(department.getName())) &&
-              !(scheduledTimeplan_[uRow + 1][uCol].hasThisTeacher(department.getName())))
+              !(scheduledTimeplan_[uRow][uCol].hasThisDepartment(departmentName)) &&
+              !(scheduledTimeplan_[uRow + 1][uCol].hasThisDepartment(departmentName)))
           {
             unitIsSuitableForTeachers = 0;
             for (uint it = 0; it < noOfAssignedTeachers; it++)
             {
               if ((departmentAvailability[uRow][uCol] == 1) &&
-                  ((teachersAvailability[it][uRow][uCol] == 1) ||
-                   (scheduledTimeplan_[uRow][uCol].hasThisTeacher(teachersNames[it]))) &&
+                  (teachersAvailability[it][uRow][uCol] == 1) &&
                   (departmentAvailability[uRow + 1][uCol] == 1) &&
-                  ((teachersAvailability[it][uRow + 1][uCol] == 1) ||
-                   (scheduledTimeplan_[uRow + 1][uCol].hasThisTeacher(teachersNames[it]))))
+                  (teachersAvailability[it][uRow + 1][uCol] == 1))
               {
                 unitIsSuitableForTeachers++;
               }
@@ -339,8 +365,8 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
               }
               else
               {
-                return false;
                 department.setState(department::State::SchedulingImpossible);
+                return false;
               }
             }
           }
@@ -358,16 +384,15 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
       {
         for (uint uCol = 0; uCol < departmentAvailability[uRow].size(); uCol++)
         {
-          // Verify whether actual unit is not full and unit underneath him
+          // Verify whether actual unit is not full and not already has this department scheduled
           if (!(scheduledTimeplan_[uRow][uCol].isFull(noOfAssignedTeachers)) &&
-              !(scheduledTimeplan_[uRow][uCol].hasThisTeacher(department.getName())))
+              !(scheduledTimeplan_[uRow][uCol].hasThisDepartment(departmentName)))
           {
             unitIsSuitableForTeachers = 0;
             for (uint it = 0; it < noOfAssignedTeachers; it++)
             {
               if ((departmentAvailability[uRow][uCol] == 1) &&
-                  ((teachersAvailability[it][uRow][uCol] == 1) ||
-                   (scheduledTimeplan_[uRow][uCol].hasThisTeacher(teachersNames[it]))))
+                  ((teachersAvailability[it][uRow][uCol] == 1)))
               {
                 unitIsSuitableForTeachers++;
               }
@@ -457,13 +482,22 @@ bool school::scheduleTimeTable()
         if (departments[indexOfDepartmentToSchedule].getState() == 
               department::State::ScheduledCombinedUnits)
         {
+          /* Debug: if, comment if not used
+          if (rowOfSuitableUnit == 0 && colOfSuitableUnit == 0 &&
+              (departments[indexOfDepartmentToSchedule].getName() == "3BSb"))
+          {
+            std::cout << "Debug: Scheduling of department: " << 
+              departments[indexOfDepartmentToSchedule].getName();
+          }
+          */
+
           // Schedule 1st unit
           scheduledTimeplan_[rowOfSuitableUnit][colOfSuitableUnit].scheduleUnit(
             assignments_[assignmentIndex].getAssignment());
           // Schedule 2nd unit
           scheduledTimeplan_[rowOfSuitableUnit + 1][colOfSuitableUnit].scheduleUnit(
             assignments_[assignmentIndex].getAssignment());
-          
+
           // chenge state to schedule sigle unit
           departments[indexOfDepartmentToSchedule].setState(department::State::ScheduleSingleUnit);
 

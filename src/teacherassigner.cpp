@@ -18,10 +18,6 @@ TeacherAssigner::TeacherAssigner(OpenXLSX::XLWorksheet& wks,
 
 bool TeacherAssigner::readAssignment()
 {
-  //Clear values
-  assignment_.department = "";
-  assignment_.assignedTeachers.clear();
-
   OpenXLSX::XLCellAssignable cell = wks_.findCell(settings_.departmentColumn + std::to_string(rowPointer_));
   //Check whether there is no end of assignment table
   if (cell.empty())
@@ -41,7 +37,10 @@ bool TeacherAssigner::readAssignment()
     {
       std::string tempTeacherInitials = wks_.cell(
       rowLetter + std::to_string(rowPointer_)).value().get<std::string>();
-      assignment_.assignedTeachers.push_back(tempTeacherInitials);
+      if (tempTeacherInitials.size() > 0)
+      {
+        assignment_.assignedTeachers.push_back(tempTeacherInitials);
+      }
     }
   }
   rowPointer_++;
