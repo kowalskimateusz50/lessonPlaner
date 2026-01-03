@@ -15,6 +15,8 @@ class ScheduledUnit
     bool hasThisDepartment(std::string departmentName);    
     void scheduleUnit(Assignment assignment);
     std::string getUnit();
+    uint getYearFromDepartmentName(std::string name);
+    bool isSuitableYearDifference(std::string departmentNameToSchedule);
 
   private:
     bool isScheduled_;

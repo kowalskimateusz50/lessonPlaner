@@ -11,6 +11,7 @@ namespace programConfig
     constexpr int maxNoOfAvailableUnits = 10;
     constexpr int maxNoOfAvailableDays = 5;
     constexpr int maxNoOfTeachersInUnit = 4;
+    constexpr int allowedYearDifference = 2;
 }
 
 class ProgramSettings

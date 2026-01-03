@@ -1,4 +1,5 @@
 #include "scheduledunit.h"
+#include <cmath>
 
 ScheduledUnit::ScheduledUnit()
 {
@@ -75,3 +76,40 @@ std::string ScheduledUnit::getUnit()
 
   return ssMessage.str();
 }
+
+uint ScheduledUnit::getYearFromDepartmentName(std::string name)
+{
+  // Get year from first character in string
+  char year = name[0];
+
+  if (year >= '0' && year <= '9')
+  {
+    return year - '0';
+  }
+  
+  return 0;
+}
+
+bool ScheduledUnit::isSuitableYearDifference(std::string departmentNameToSchedule)
+{
+
+  uint yearToSchedule = getYearFromDepartmentName(departmentNameToSchedule);
+
+  if (assignments_.size() == 0)
+  {
+    return true;
+  }
+
+  for (const auto& assignment : assignments_)
+  {
+    uint scheduledYear = getYearFromDepartmentName(assignment.department);
+    int yearDiff = static_cast<int>(scheduledYear) - static_cast<int>(yearToSchedule);
+    if (std::abs(yearDiff) > programConfig::allowedYearDifference)
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
+

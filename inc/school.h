@@ -26,7 +26,7 @@ class school
     void showDepartmentsAvailability();
     int readTeachersAssignment();
     void showTeachersAssignment();
-    bool scheduleTimeTable();
+    uint scheduleTimeTable();
     uint findLowestAvailableDepartment(std::vector<department>& departments);
     bool findSuitableUnit(std::vector<teacher>& teachers,
                           department& department,
@@ -55,5 +55,6 @@ class school
     uint teachersCounter;
     uint departmentsCounter;
     uint assignmentsCounter;
+    uint scheduledDepartmentsCounter;
 };
 
