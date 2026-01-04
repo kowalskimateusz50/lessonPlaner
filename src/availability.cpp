@@ -138,4 +138,8 @@ void Availability::storeAvailability(int row, int col, int availabilityStatus)
   }
 }
 
+bool Availability::isAvailable(int row, int col)
+{
+  return availabilityMatrix_[row][col] == 1;
+}
 
