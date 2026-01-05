@@ -49,13 +49,12 @@ bool ScheduledUnit::hasThisDepartment(std::string departmentName)
 
 void ScheduledUnit::scheduleUnit(Assignment assignment)
 {
-  if ((noOfAssignedTeachers_ + assignment.assignedTeachers.size()) <= 
-        programConfig::maxNoOfTeachersInUnit)
-  {
     assignments_.push_back(assignment);
     noOfAssignedTeachers_ += assignment.assignedTeachers.size();
-    isScheduled_ = true;
-  }
+    if (!isScheduled_)
+    {
+      isScheduled_ = true;
+    }
 }
 
 std::string ScheduledUnit::getUnit()
@@ -111,5 +110,11 @@ bool ScheduledUnit::isSuitableYearDifference(std::string departmentNameToSchedul
   }
 
   return true;
+}
+
+bool ScheduledUnit::isOptimalTeacherUsage(std::size_t noOfAssignedTeachers)
+{
+  return ((noOfAssignedTeachers_ + static_cast<uint>(noOfAssignedTeachers)) ==
+          (programConfig::maxNoOfTeachersInUnit));
 }
 

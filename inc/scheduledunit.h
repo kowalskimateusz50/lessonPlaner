@@ -17,6 +17,7 @@ class ScheduledUnit
     std::string getUnit();
     uint getYearFromDepartmentName(std::string name);
     bool isSuitableYearDifference(std::string departmentNameToSchedule);
+    bool isOptimalTeacherUsage(std::size_t noOfAssignedTeachers);
 
   private:
     bool isScheduled_;

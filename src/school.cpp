@@ -85,7 +85,7 @@ void school::prepareOutputDataFile()
  */
 int school::readTeachersAvailability()
 {
-  int teachersCounter = 0;
+  teachersCounter = 0;
   uint rowPointer = 2;
   std::stringstream logMessage;
 
@@ -239,21 +239,23 @@ void school::showTeachersAssignment()
 
 uint school::findLowestAvailableDepartment(std::vector<department>& departments,
                                            std::vector<teacher>& teachers,
-                                           std::vector<TeacherAssigner>& assignments)
+                                           std::vector<TeacherAssigner>& assignments,
+                                           std::array<std::array<ScheduledUnit, 
+                                           programConfig::maxNoOfAvailableDays>, 
+                                           programConfig::maxNoOfAvailableUnits>& scheduledTimeplan)
 {
   // Set lowest value as max possible to schedule + 1
   uint lowestAvailabilityUnits = static_cast<uint>(programConfig::maxNoOfAvailableUnits *
     programConfig::maxNoOfAvailableDays + 1);
   uint lowestAvailabilityIndex = std::numeric_limits<uint>::max();
-  uint counterOfAvailableUnits = 0;
+  uint counterOfAvailableUnits = std::numeric_limits<uint>::max();
 
+  // Selecting combined units
   for (int i = 0; i < departments.size(); i++)
   {
-    counterOfAvailableUnits = 0;
-
-    if ((departments[i].getState() == department::State::ScheduleCombinedUnits) ||
-        (departments[i].getState() == department::State::ScheduleSingleUnit))
+    if (departments[i].getState() == department::State::ScheduleCombinedUnits)
     {
+      counterOfAvailableUnits = 0;
 
       // 1. Get teachers assigned to this departments
       std::vector<std::string> assignedTeachers;
@@ -291,13 +293,14 @@ uint school::findLowestAvailableDepartment(std::vector<department>& departments,
           uint unitIsSuitableForTeachers = 0;
           for (uint it = 0; it < noOfAssignedTeachers; it++)
           {
-            if (teachersAvailability[it][uRow][uCol] == 1)
+            if ((teachersAvailability[it][uRow][uCol] == 1) &&
+                (departmentAvailability[uRow][uCol] == 1) &&
+                (!scheduledTimeplan[uRow][uCol].isFull(noOfAssignedTeachers)))
             {
               unitIsSuitableForTeachers++;
             }
           }
-          if ((unitIsSuitableForTeachers == noOfAssignedTeachers) &&
-              (departmentAvailability[uRow][uCol] == 1))
+          if (unitIsSuitableForTeachers == noOfAssignedTeachers)
           {
             counterOfAvailableUnits++;
           }
@@ -312,6 +315,77 @@ uint school::findLowestAvailableDepartment(std::vector<department>& departments,
       }
     }
   }
+  if (lowestAvailabilityIndex != std::numeric_limits<uint>::max())
+  {
+    return lowestAvailabilityIndex;
+  }
+
+  // Selecting single units
+  for (int i = 0; i < departments.size(); i++)
+  {
+    if (departments[i].getState() == department::State::ScheduleSingleUnit)
+    {
+      counterOfAvailableUnits = 0;
+
+      // 1. Get teachers assigned to this departments
+      std::vector<std::string> assignedTeachers;
+      std::string departmentName = departments[i].getName();
+
+      for (int asit = 0; asit < assignments.size(); asit++)
+      {
+        if (departmentName == assignments[asit].getAssignedDepartment())
+        {
+          assignedTeachers = assignments[asit].getAssignedTeachers();
+          break;
+        }
+      }
+
+      // 2. Get department and teachers avaiability matrix
+      std::vector<std::vector<int>> departmentAvailability = departments[i].getAvailabilityVector();
+      std::vector<std::vector<std::vector<int>>> teachersAvailability;
+      for (uint ite = 0; ite < assignedTeachers.size(); ite++)
+      {
+        for (uint j = 0; j < teachers.size(); j++)
+        {
+          if (assignedTeachers[ite] == teachers[j].getName())
+          {
+            teachersAvailability.emplace_back(teachers[j].getAvailabilityVector());
+          }
+        }
+      }
+
+      std::size_t noOfAssignedTeachers = teachersAvailability.size();
+      // 3. Count availability
+      for (uint uRow = 0; uRow < departmentAvailability.size(); uRow++)
+      {
+        for (uint uCol = 0; uCol < departmentAvailability[uRow].size(); uCol++)
+        {
+          uint unitIsSuitableForTeachers = 0;
+          for (uint it = 0; it < noOfAssignedTeachers; it++)
+          {
+            if ((teachersAvailability[it][uRow][uCol] == 1) &&
+                (departmentAvailability[uRow][uCol] == 1) &&
+                (!scheduledTimeplan[uRow][uCol].isFull(noOfAssignedTeachers)))
+            {
+              unitIsSuitableForTeachers++;
+            }
+          }
+          if (unitIsSuitableForTeachers == noOfAssignedTeachers)
+          {
+            counterOfAvailableUnits++;
+          }
+        }
+      }
+
+      // 4. Check whether counted availability is lower than previous
+      if (counterOfAvailableUnits < lowestAvailabilityUnits)
+      {
+        lowestAvailabilityUnits = counterOfAvailableUnits;
+        lowestAvailabilityIndex = i;
+      }
+    }
+  }
+
   return lowestAvailabilityIndex;
 }
 bool school::findSuitableUnit(std::vector<teacher>& teachers,
@@ -368,6 +442,7 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
       uint unitIsSuitableForTeachers = 0;
       std::size_t noOfAssignedTeachers = teachersAvailability.size();
 
+      // 1st schedule in the most efficient way
       for (uint uRow = 0; uRow < (departmentAvailability.size() - 1); uRow++)
       {
         for (uint uCol = 0; uCol < departmentAvailability[uRow].size(); uCol++)
@@ -381,7 +456,76 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
 
           // Verify whether actual unit and unit underneath him is not full and has no already
           // scheduled this department
-          if (!(scheduledTimeplan_[uRow][uCol].isFull(noOfAssignedTeachers)) && 
+          if ((scheduledTimeplan_[uRow][uCol].isScheduled()) && 
+              (scheduledTimeplan_[uRow + 1][uCol].isScheduled()) &&
+              (scheduledTimeplan_[uRow][uCol].isOptimalTeacherUsage(noOfAssignedTeachers)) && 
+              (scheduledTimeplan_[uRow + 1][uCol].isOptimalTeacherUsage(noOfAssignedTeachers)) &&
+              !(scheduledTimeplan_[uRow][uCol].hasThisDepartment(departmentName)) &&
+              !(scheduledTimeplan_[uRow + 1][uCol].hasThisDepartment(departmentName)))
+          {
+            unitIsSuitableForTeachers = 0;
+            for (uint it = 0; it < noOfAssignedTeachers; it++)
+            {
+              if ((departmentAvailability[uRow][uCol] == 1) &&
+                  (teachersAvailability[it][uRow][uCol] == 1) &&
+                  (departmentAvailability[uRow + 1][uCol] == 1) &&
+                  (teachersAvailability[it][uRow + 1][uCol] == 1) && 
+                  (!scheduledTimeplan_[uRow][uCol].hasThisTeacher(assignedTeachers[it])) &&
+                  (!scheduledTimeplan_[uRow + 1][uCol].hasThisTeacher(assignedTeachers[it])) &&
+                  (scheduledTimeplan_[uRow][uCol].isSuitableYearDifference(departmentName)) &&
+                  (scheduledTimeplan_[uRow + 1][uCol].isSuitableYearDifference(departmentName)))
+              {
+                unitIsSuitableForTeachers++;
+              }
+            }
+            if (unitIsSuitableForTeachers == noOfAssignedTeachers)
+            {
+              unitRowIndex = uRow;
+              unitColIndex = uCol;
+
+              // Check whether everything has been successfully scheduled
+              if ((unitRowIndex != std::numeric_limits<uint>::max()) &&
+                  (unitColIndex != std::numeric_limits<uint>::max()))
+              {
+                department.setScheduledCol(uCol);
+
+                // Sign this teachers as busy then
+                for (uint i = 0; i < assignedTeachers.size(); i++)
+                {
+                  for (uint j = 0; j < teachers.size(); j++)
+                  {
+                    if (assignedTeachers[i] == teachers[j].getName())
+                    {
+                      teachers[j].storeAvailability(unitRowIndex, unitColIndex, 0);
+                    }
+                  }
+                }
+                // Assign next state of scheduling 
+                department.setState(department::State::ScheduledCombinedUnits);
+                return true;
+              }
+            }
+          }
+        }
+      }
+
+      // 2nd schedule in the scheduled but not full units
+      for (uint uRow = 0; uRow < (departmentAvailability.size() - 1); uRow++)
+      {
+        for (uint uCol = 0; uCol < departmentAvailability[uRow].size(); uCol++)
+        {
+          // Debug: scheduling logic: Supress if not used
+          //std::string departmentToDebug = "1TRM";
+          //if (departmentName == departmentToDebug)
+          //{
+          //  std::cout << "Department debug: " << departmentToDebug;
+          //}
+
+          // Verify whether actual unit and unit underneath him is not full and has no already
+          // scheduled this department
+          if ((scheduledTimeplan_[uRow][uCol].isScheduled()) && 
+              (scheduledTimeplan_[uRow + 1][uCol].isScheduled()) &&
+              !(scheduledTimeplan_[uRow][uCol].isFull(noOfAssignedTeachers)) &&
               !(scheduledTimeplan_[uRow + 1][uCol].isFull(noOfAssignedTeachers)) &&
               !(scheduledTimeplan_[uRow][uCol].hasThisDepartment(departmentName)) &&
               !(scheduledTimeplan_[uRow + 1][uCol].hasThisDepartment(departmentName)))
@@ -410,7 +554,72 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
               if ((unitRowIndex != std::numeric_limits<uint>::max()) &&
                   (unitColIndex != std::numeric_limits<uint>::max()))
               {
-                department.setScheduledRow(uRow);
+                department.setScheduledCol(uCol);
+
+                // Sign this teachers as busy then
+                for (uint i = 0; i < assignedTeachers.size(); i++)
+                {
+                  for (uint j = 0; j < teachers.size(); j++)
+                  {
+                    if (assignedTeachers[i] == teachers[j].getName())
+                    {
+                      teachers[j].storeAvailability(unitRowIndex, unitColIndex, 0);
+                    }
+                  }
+                }
+                // Assign next state of scheduling 
+                department.setState(department::State::ScheduledCombinedUnits);
+                return true;
+              }
+            }
+          }
+        }
+      }
+
+      // 3rd schedule in the standard way
+      for (uint uRow = 0; uRow < (departmentAvailability.size() - 1); uRow++)
+      {
+        for (uint uCol = 0; uCol < departmentAvailability[uRow].size(); uCol++)
+        {
+          // Debug: scheduling logic: Supress if not used
+          //std::string departmentToDebug = "1TRM";
+          //if (departmentName == departmentToDebug)
+          //{
+          //  std::cout << "Department debug: " << departmentToDebug;
+          //}
+
+          // Verify whether actual unit and unit underneath him is not full and has no already
+          // scheduled this department
+          if (!(scheduledTimeplan_[uRow][uCol].isFull(noOfAssignedTeachers)) &&
+              !(scheduledTimeplan_[uRow + 1][uCol].isFull(noOfAssignedTeachers)) &&
+              !(scheduledTimeplan_[uRow][uCol].hasThisDepartment(departmentName)) &&
+              !(scheduledTimeplan_[uRow + 1][uCol].hasThisDepartment(departmentName)))
+          {
+            unitIsSuitableForTeachers = 0;
+            for (uint it = 0; it < noOfAssignedTeachers; it++)
+            {
+              if ((departmentAvailability[uRow][uCol] == 1) &&
+                  (teachersAvailability[it][uRow][uCol] == 1) &&
+                  (departmentAvailability[uRow + 1][uCol] == 1) &&
+                  (teachersAvailability[it][uRow + 1][uCol] == 1) && 
+                  (!scheduledTimeplan_[uRow][uCol].hasThisTeacher(assignedTeachers[it])) &&
+                  (!scheduledTimeplan_[uRow + 1][uCol].hasThisTeacher(assignedTeachers[it])) &&
+                  (scheduledTimeplan_[uRow][uCol].isSuitableYearDifference(departmentName)) &&
+                  (scheduledTimeplan_[uRow + 1][uCol].isSuitableYearDifference(departmentName)))
+              {
+                unitIsSuitableForTeachers++;
+              }
+            }
+            if (unitIsSuitableForTeachers == noOfAssignedTeachers)
+            {
+              unitRowIndex = uRow;
+              unitColIndex = uCol;
+
+              // Check whether everything has been successfully scheduled
+              if ((unitRowIndex != std::numeric_limits<uint>::max()) &&
+                  (unitColIndex != std::numeric_limits<uint>::max()))
+              {
+                department.setScheduledCol(uCol);
 
                 // Sign this teachers as busy then
                 for (uint i = 0; i < assignedTeachers.size(); i++)
@@ -444,6 +653,115 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
       uint unitIsSuitableForTeachers = 0;
       std::size_t noOfAssignedTeachers = teachersAvailability.size();
 
+      std::string departmentToDebug = "3BSb";
+      if (departmentName == departmentToDebug)
+      {
+        std::cout << "Department debug: " << departmentToDebug;
+      }
+
+      // 1st schedule in the most efficient way from teacher point of view
+      for (uint uRow = 0; uRow < departmentAvailability.size(); uRow++)
+      {
+        for (uint uCol = 0; uCol < departmentAvailability[uRow].size(); uCol++)
+        {
+          // Verify whether actual unit is not full and not already has this department scheduled
+          if ((scheduledTimeplan_[uRow][uCol].isScheduled()) &&
+              (scheduledTimeplan_[uRow][uCol].isOptimalTeacherUsage(noOfAssignedTeachers)) &&
+              (!scheduledTimeplan_[uRow][uCol].hasThisDepartment(departmentName)) &&
+              (department.isNotScheduledAtThisCol(uCol)) &&
+              (scheduledTimeplan_[uRow][uCol].isSuitableYearDifference(departmentName)))
+          {
+            unitIsSuitableForTeachers = 0;
+            for (uint it = 0; it < noOfAssignedTeachers; it++)
+            {
+              if ((departmentAvailability[uRow][uCol] == 1) &&
+                  ((teachersAvailability[it][uRow][uCol] == 1)) &&
+                  (!scheduledTimeplan_[uRow][uCol].hasThisTeacher(assignedTeachers[it])))
+              {
+                unitIsSuitableForTeachers++;
+              }
+            }
+            if (unitIsSuitableForTeachers == noOfAssignedTeachers)
+            {
+              unitRowIndex = uRow;
+              unitColIndex = uCol;
+
+              // Check whether everything has been successfully scheduled
+              if ((unitRowIndex != std::numeric_limits<uint>::max()) &&
+                  (unitColIndex != std::numeric_limits<uint>::max()))
+              {
+                // Sign this teachers as busy then
+                for (uint i = 0; i < assignedTeachers.size(); i++)
+                {
+                  for (uint j = 0; j < teachers.size(); j++)
+                  {
+                    if (assignedTeachers[i] == teachers[j].getName())
+                    {
+                      teachers[j].storeAvailability(unitRowIndex, unitColIndex, 0);
+                    }
+                  }
+                }
+                // Assign next state of scheduling 
+                department.setState(department::State::ScheduledSingleUnit);
+                return true;
+              }
+            }
+          }
+        }
+      }
+
+      // 2nd schedule in the standard way
+      for (uint uRow = 0; uRow < departmentAvailability.size(); uRow++)
+      {
+        for (uint uCol = 0; uCol < departmentAvailability[uRow].size(); uCol++)
+        {
+          // Verify whether actual unit is not full and not already has this department scheduled
+          if ((scheduledTimeplan_[uRow][uCol].isScheduled()) &&
+              (!scheduledTimeplan_[uRow][uCol].isFull(noOfAssignedTeachers)) &&
+              (!scheduledTimeplan_[uRow][uCol].hasThisDepartment(departmentName)) &&
+              (department.isNotScheduledAtThisCol(uCol)) &&
+              (scheduledTimeplan_[uRow][uCol].isSuitableYearDifference(departmentName)))
+          {
+            unitIsSuitableForTeachers = 0;
+            for (uint it = 0; it < noOfAssignedTeachers; it++)
+            {
+              if ((departmentAvailability[uRow][uCol] == 1) &&
+                  ((teachersAvailability[it][uRow][uCol] == 1)) &&
+                  (!scheduledTimeplan_[uRow][uCol].hasThisTeacher(assignedTeachers[it])))
+              {
+                unitIsSuitableForTeachers++;
+              }
+            }
+            if (unitIsSuitableForTeachers == noOfAssignedTeachers)
+            {
+              unitRowIndex = uRow;
+              unitColIndex = uCol;
+
+              // Check whether everything has been successfully scheduled
+              if ((unitRowIndex != std::numeric_limits<uint>::max()) &&
+                  (unitColIndex != std::numeric_limits<uint>::max()))
+              {
+                // Sign this teachers as busy then
+                for (uint i = 0; i < assignedTeachers.size(); i++)
+                {
+                  for (uint j = 0; j < teachers.size(); j++)
+                  {
+                    if (assignedTeachers[i] == teachers[j].getName())
+                    {
+                      teachers[j].storeAvailability(unitRowIndex, unitColIndex, 0);
+                    }
+                  }
+                }
+                // Assign next state of scheduling 
+                department.setState(department::State::ScheduledSingleUnit);
+                return true;
+              }
+            }
+          }
+        }
+      }
+
+      // 3rd schedule in the standard way
       for (uint uRow = 0; uRow < departmentAvailability.size(); uRow++)
       {
         for (uint uCol = 0; uCol < departmentAvailability[uRow].size(); uCol++)
@@ -451,7 +769,7 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
           // Verify whether actual unit is not full and not already has this department scheduled
           if ((!scheduledTimeplan_[uRow][uCol].isFull(noOfAssignedTeachers)) &&
               (!scheduledTimeplan_[uRow][uCol].hasThisDepartment(departmentName)) &&
-              (department.isNotScheduledAtThisRow(uRow)) &&
+              (department.isNotScheduledAtThisCol(uCol)) &&
               (scheduledTimeplan_[uRow][uCol].isSuitableYearDifference(departmentName)))
           {
             unitIsSuitableForTeachers = 0;
@@ -525,7 +843,8 @@ uint school::scheduleTimeTable()
     // 1. Find a department with the lowest availability
     uint indexOfDepartmentToSchedule = findLowestAvailableDepartment(departments,
                                                                      teachers,
-                                                                     assignments);
+                                                                     assignments,
+                                                                     scheduledTimeplan_);
 
     std::stringstream logMessage;
   
@@ -545,7 +864,6 @@ uint school::scheduleTimeTable()
                             colOfSuitableUnit,
                             assignmentIndex))
       {
-
         // Assign combined timeplan unit
         if (departments[indexOfDepartmentToSchedule].getState() == 
               department::State::ScheduledCombinedUnits)
@@ -643,8 +961,6 @@ uint school::scheduleTimeTable()
   "Read assignments: " << assignmentsCounter << std::endl <<
   "Scheduled departments: " << scheduledDepartmentsCounter << std::endl <<
   "Failed scheduling: " << failedScheduled;
-
-
 
   logger_.appendLog(M_INFO,
                     M_LOG_ENABLED,

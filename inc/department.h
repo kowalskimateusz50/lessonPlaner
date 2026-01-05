@@ -33,11 +33,11 @@ class department  : public Availability
     void setState(State state);
     State getState();
     std::string stateToString(State state);
-    void setScheduledRow(uint row);
-    bool isNotScheduledAtThisRow(uint row);
+    void setScheduledCol(uint col);
+    bool isNotScheduledAtThisCol(uint col);
 
   private:
     State state_;
-    uint scheduledRow_;
+    uint scheduledCol_;
 };
 
