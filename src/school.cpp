@@ -66,9 +66,9 @@ void school::prepareOutputDataFiles()
 
     try
     {
-        timePlanFile_.create(timePlanFilePath, true);   // Create new time plan file wks
+        timePlanFile_.create(timePlanFilePath, OpenXLSX::XLForceOverwrite);   // Create new time plan file wks
         timePlanFile_.open(timePlanFilePath);     // Open new time plan file path wks
-        teacherPlanFile_.create(teacherPlanFilePath, true);   // Create new time plan file wks
+        teacherPlanFile_.create(teacherPlanFilePath, OpenXLSX::XLForceOverwrite);   // Create new time plan file wks
         teacherPlanFile_.open(teacherPlanFilePath);     // Open new time plan file path wks
     }
     catch (const std::exception& e)
@@ -973,53 +973,12 @@ uint school::scheduleTimeTable()
   return scheduledDepartments;
 }
 /*
-OpenXLSX::XLStyleIndex school::createHeaderStyle(OpenXLSX::XLDocument& doc)
-{
-    auto& styles = doc.styles();
-
-    // FONT
-    OpenXLSX::XLFont font;
-    font.setBold(true);
-    auto fontId = styles.fonts().add(font);
-
-    // FILL (zielone tło)
-    OpenXLSX::XLFill fill;
-    fill.setPatternType(XLFillPatternValues::Solid);
-    fill.setFgColor(XLColor(198, 224, 180));
-    auto fillId = styles.fills().add(fill);
-
-    // BORDER
-    OpenXLSX::XLBorder border;
-    border.left().setStyle(XLBorderStyleValues::Thin);
-    border.right().setStyle(XLBorderStyleValues::Thin);
-    border.top().setStyle(XLBorderStyleValues::Thin);
-    border.bottom().setStyle(XLBorderStyleValues::Thin);
-    auto borderId = styles.borders().add(border);
-
-    // ALIGNMENT
-    XLAlignment alignment;
-    alignment.setHorizontal(XLAlignmentHorizontalValues::Center);
-    alignment.setVertical(XLAlignmentVerticalValues::Center);
-    alignment.setWrapText(true);
-
-    // CELL FORMAT
-    XLCellFormat format;
-    format.setFontId(fontId);
-    format.setFillId(fillId);
-    format.setBorderId(borderId);
-    format.setAlignment(alignment);
-
-    return styles.cellFormats().add(format);
-}
-*/
 void school::formatScheduleTable(OpenXLSX::XLDocument& doc,
                                  OpenXLSX::XLWorksheet& wks,
                                  const char startLetter,
                                  const int startRow,
                                  std::string headerText)
 {
-
-  //auto headerStyle = createHeaderStyle(doc);
 
   // Columns size formatting
   wks.column(startLetter).setWidth(5);
@@ -1035,19 +994,15 @@ void school::formatScheduleTable(OpenXLSX::XLDocument& doc,
     wks.row(row).setHeight(45);
   }
 
-  // Cell style formatting 
- //OpenXLSX::XLStyle cellStyle;
-  //cellStyle.alignment().setWrapText(true);
- // cellStyle.alignment().setVertical(XLAlignmentVertical::Center);
- // cellStyle.border().setStyle(XLBorderStyle::Thin);
-
   // Header cells formatting
   std::string startCell = to_string(startLetter) + to_string(startRow);
   std::string cellsToMerge = startCell + ":" +
     to_string(static_cast<char>(startLetter + 5)) + to_string(startRow);
   wks.mergeCells(cellsToMerge);
-  wks.cell(startCell).value() = headerText;
- // wks.cell(startCell).style() = headerStyle;
+
+  auto headerCell = wks.cell(startCell);
+  headerCell.value() = headerText;
+  applyHeaderStyle(headerCell);
 
   // Fill days 
   std::array<string, 5> days = {
@@ -1056,17 +1011,19 @@ void school::formatScheduleTable(OpenXLSX::XLDocument& doc,
 
   for (int i = 0; i < days.size(); i++)
   {
-      std::string cell = std::string(1, static_cast<char>(startLetter + 1 + i)) + to_string(startRow + 1);
-      wks.cell(cell).value() = days[i];
-      //wks.cell(cell).style() = headerStyle;
-  }
+      std::string cellAddr = std::string(1, static_cast<char>(startLetter + 1 + i)) + to_string(startRow + 1);
+      auto cell = wks.cell(cellAddr);
+      cell.value() = days[i];
+      applyHeaderStyle(cell);
+    }
 
   // Fill Units numbers
   for (int i = 1; i <= programConfig::maxNoOfAvailableUnits; ++i)
   {
-      std::string cell = "A" + std::to_string(i + startRow + 2);
-      wks.cell(cell).value() = i;
-      //wks.cell(cell).style() = headerStyle;
+      std::string cellAddr = "A" + std::to_string(i + startRow + 2);
+      auto cell = wks.cell(cellAddr);
+      cell.value() = i;
+      applyHeaderStyle(cell);
   }
 
   // Format assignment cells
@@ -1077,10 +1034,103 @@ void school::formatScheduleTable(OpenXLSX::XLDocument& doc,
       char letter = static_cast<char>(startLetter + col);
       int rowIndex = static_cast<int>(startRow + row);
       std::string cell = std::string(1, letter) + std::to_string(rowIndex);
-      //wks.cell(cell).style() = cellStyle;
     }
   }
 
+}
+*/
+void school::formatTimePlan(OpenXLSX::XLDocument& timePlanFile)
+{
+    OpenXLSX::XLWorksheet wks = timePlanFile.workbook().worksheet(1);
+
+    auto& fonts   = timePlanFile.styles().fonts();
+    auto& fills   = timePlanFile.styles().fills();
+    auto& borders = timePlanFile.styles().borders();
+    auto& formats = timePlanFile.styles().cellFormats();
+
+    // ===== KOLORY =====
+    OpenXLSX::XLColor greenDark("FF7FBF5F");   // pasek tytułu
+    OpenXLSX::XLColor greenLight("FFA9D18E");  // nagłówki
+    OpenXLSX::XLColor black("FF000000");
+
+    // ===== FONT: BOLD =====
+    OpenXLSX::XLStyleIndex fontBold = fonts.create();
+    fonts[fontBold].setBold();
+
+    // ===== OBRAMOWANIE: CIENKIE =====
+    OpenXLSX::XLStyleIndex borderThin = borders.create();
+    borders[borderThin].setOutline(true);
+    borders[borderThin].setLeft  (OpenXLSX::XLLineStyleThin, black);
+    borders[borderThin].setRight (OpenXLSX::XLLineStyleThin, black);
+    borders[borderThin].setTop   (OpenXLSX::XLLineStyleThin, black);
+    borders[borderThin].setBottom(OpenXLSX::XLLineStyleThin, black);
+
+    // ===== FORMAT: TYTUŁ =====
+    OpenXLSX::XLStyleIndex titleFill = fills.create();
+    fills[titleFill].setPatternType(OpenXLSX::XLPatternSolid);
+    fills[titleFill].setColor(greenDark);
+
+    OpenXLSX::XLStyleIndex titleFormat = formats.create();
+    formats[titleFormat].setFontIndex(fontBold);
+    formats[titleFormat].setFillIndex(titleFill);
+    formats[titleFormat].setBorderIndex(borderThin);
+    formats[titleFormat].alignment(OpenXLSX::XLCreateIfMissing).setHorizontal(OpenXLSX::XLAlignCenter);
+    formats[titleFormat].alignment(OpenXLSX::XLCreateIfMissing).setVertical(OpenXLSX::XLAlignCenter);
+
+    // ===== FORMAT: NAGŁÓWKI =====
+    OpenXLSX::XLStyleIndex headerFill = fills.create();
+    fills[headerFill].setPatternType(OpenXLSX::XLPatternSolid);
+    fills[headerFill].setColor(greenLight);
+
+    OpenXLSX::XLStyleIndex headerFormat = formats.create();
+    formats[headerFormat].setFontIndex(fontBold);
+    formats[headerFormat].setFillIndex(headerFill);
+    formats[headerFormat].setBorderIndex(borderThin);
+    formats[headerFormat].alignment(OpenXLSX::XLCreateIfMissing).setHorizontal(OpenXLSX::XLAlignCenter);
+    formats[headerFormat].alignment(OpenXLSX::XLCreateIfMissing).setVertical(OpenXLSX::XLAlignCenter);
+    formats[headerFormat].alignment(OpenXLSX::XLCreateIfMissing).setWrapText(true);
+
+    // ===== FORMAT: ZWYKŁE KOMÓRKI =====
+    OpenXLSX::XLStyleIndex cellFormat = formats.create();
+    formats[cellFormat].setBorderIndex(borderThin);
+    formats[cellFormat].alignment(OpenXLSX::XLCreateIfMissing).setWrapText(true);
+    formats[cellFormat].alignment(OpenXLSX::XLCreateIfMissing).setVertical(OpenXLSX::XLAlignCenter);
+
+    // ===== TYTUŁ =====
+    wks.cell("A1") = "PLAN LEKCJI";
+    wks.mergeCells("A1:F1");
+    wks.cell("A1").setCellFormat(titleFormat);
+    wks.row(1).setHeight(35);
+
+    // ===== NAGŁÓWKI DNI =====
+    const char* headers[] = {
+        "", "PONIEDZIAŁEK", "WTOREK", "ŚRODA", "CZWARTEK", "PIĄTEK"
+    };
+
+    for (int col = 1; col <= 6; ++col) {
+        wks.cell(2, col) = headers[col - 1];
+        wks.cell(2, col).setCellFormat(headerFormat);
+    }
+    wks.row(2).setHeight(30);
+
+    // ===== NUMERY LEKCJI =====
+    for (int row = 3; row <= 12; ++row) {
+        wks.cell(row, 1) = row - 2;
+        wks.cell(row, 1).setCellFormat(headerFormat);
+        wks.row(row).setHeight(50);
+    }
+
+    // ===== FORMAT DLA OBSZARU PLANU =====
+    OpenXLSX::XLCellRange planRange = wks.range("B3:F12");
+    planRange.setFormat(cellFormat);
+
+    // ===== SZEROKOŚCI KOLUMN =====
+    wks.column("A").setWidth(6);
+    wks.column("B").setWidth(18);
+    wks.column("C").setWidth(18);
+    wks.column("D").setWidth(18);
+    wks.column("E").setWidth(18);
+    wks.column("F").setWidth(18);
 }
 
 int school::writeScheduledTimeplan()
@@ -1089,10 +1139,11 @@ int school::writeScheduledTimeplan()
   // Write example data to worksheet
   timePlanWks_ = timePlanFile_.workbook().worksheet("Sheet1");
   
-  constexpr char startLetter = 'A';
-  constexpr int startRow = 1;
+  constexpr char startLetter = 'B';
+  constexpr int startRow = 3;
 
-  formatScheduleTable(timePlanFile_, timePlanWks_, startLetter, startRow, "Plan lekcji");
+  //formatScheduleTable(timePlanFile_, timePlanWks_, startLetter, startRow, "Plan lekcji");
+  formatTimePlan(timePlanFile_);
 
   for (std::size_t row = 0; row < scheduledTimeplan_.size(); row++)
   {

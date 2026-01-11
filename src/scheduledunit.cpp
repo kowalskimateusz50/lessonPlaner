@@ -60,14 +60,14 @@ void ScheduledUnit::scheduleUnit(Assignment assignment)
 std::string ScheduledUnit::getUnit()
 {
   std::stringstream ssMessage;
-  for (const auto& assignment : assignments_)
+  for (int i = 0; i < assignments_.size(); i++)
   {
-    ssMessage << assignment.department;
-    for (const auto& teacher : assignment.assignedTeachers)
+    ssMessage << assignments_[i].department;
+    for (const auto& teacher : assignments_[i].assignedTeachers)
     {
       ssMessage << " " << teacher;
     }
-    if (assignments_.size() > 1)
+    if (i < assignments_.size() - 1)
     {
       ssMessage << std::endl;
     }
