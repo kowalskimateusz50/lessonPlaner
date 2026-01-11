@@ -9,7 +9,7 @@ school::school(ProgramSettings& programSettings, Logging& logger)
   prepareInputDataFile();
 
   // Open output data file
-  prepareOutputDataFile();
+  prepareOutputDataFiles();
 
   // Initialize counters
   teachersCounter = 0;
@@ -20,12 +20,14 @@ school::school(ProgramSettings& programSettings, Logging& logger)
 
 school::~school()
 {
-  //Close input file
+  // Close input file
   inputFile_.close();
 
-  //Close output file TODO
-  outputFile_.close();
+  // Close time plan file
+  timePlanFile_.close();
 
+  // Close teacher plan file
+  teacherPlanFile_.close();
 }
 
 void school::prepareInputDataFile()
@@ -36,15 +38,14 @@ void school::prepareInputDataFile()
   inputFileWks_ = inputFile_.workbook().worksheet(1);
 }
 
-void school::prepareOutputDataFile()
+void school::prepareOutputDataFiles()
 {
-  std::string filePath = programSettings_.getOutputFilePath();
+  std::string timePlanFilePath = programSettings_.getTimePlanFilePath();
+  std::string teacherPlanFilePath = programSettings_.getTeacherPlanFilePath();
 
-  fs::path filePathObj(filePath);
-
+  fs::path filePathObj(timePlanFilePath);
   fs::path directory = filePathObj.parent_path();
 
-  
     // Create folder if doesn't exists
     if (!directory.empty() && !fs::exists(directory))
     {
@@ -65,8 +66,10 @@ void school::prepareOutputDataFile()
 
     try
     {
-        outputFile_.create(filePath, true);   // Create new wks
-        outputFile_.open(filePath);     // Open new wks
+        timePlanFile_.create(timePlanFilePath, true);   // Create new time plan file wks
+        timePlanFile_.open(timePlanFilePath);     // Open new time plan file path wks
+        teacherPlanFile_.create(teacherPlanFilePath, true);   // Create new time plan file wks
+        teacherPlanFile_.open(teacherPlanFilePath);     // Open new time plan file path wks
     }
     catch (const std::exception& e)
     {
@@ -969,15 +972,127 @@ uint school::scheduleTimeTable()
 
   return scheduledDepartments;
 }
+/*
+OpenXLSX::XLStyleIndex school::createHeaderStyle(OpenXLSX::XLDocument& doc)
+{
+    auto& styles = doc.styles();
+
+    // FONT
+    OpenXLSX::XLFont font;
+    font.setBold(true);
+    auto fontId = styles.fonts().add(font);
+
+    // FILL (zielone tło)
+    OpenXLSX::XLFill fill;
+    fill.setPatternType(XLFillPatternValues::Solid);
+    fill.setFgColor(XLColor(198, 224, 180));
+    auto fillId = styles.fills().add(fill);
+
+    // BORDER
+    OpenXLSX::XLBorder border;
+    border.left().setStyle(XLBorderStyleValues::Thin);
+    border.right().setStyle(XLBorderStyleValues::Thin);
+    border.top().setStyle(XLBorderStyleValues::Thin);
+    border.bottom().setStyle(XLBorderStyleValues::Thin);
+    auto borderId = styles.borders().add(border);
+
+    // ALIGNMENT
+    XLAlignment alignment;
+    alignment.setHorizontal(XLAlignmentHorizontalValues::Center);
+    alignment.setVertical(XLAlignmentVerticalValues::Center);
+    alignment.setWrapText(true);
+
+    // CELL FORMAT
+    XLCellFormat format;
+    format.setFontId(fontId);
+    format.setFillId(fillId);
+    format.setBorderId(borderId);
+    format.setAlignment(alignment);
+
+    return styles.cellFormats().add(format);
+}
+*/
+void school::formatScheduleTable(OpenXLSX::XLDocument& doc,
+                                 OpenXLSX::XLWorksheet& wks,
+                                 const char startLetter,
+                                 const int startRow,
+                                 std::string headerText)
+{
+
+  //auto headerStyle = createHeaderStyle(doc);
+
+  // Columns size formatting
+  wks.column(startLetter).setWidth(5);
+  wks.column(static_cast<char>(startLetter + 1)).setWidth(22);
+  wks.column(static_cast<char>(startLetter + 2)).setWidth(22);
+  wks.column(static_cast<char>(startLetter + 3)).setWidth(22);
+  wks.column(static_cast<char>(startLetter + 4)).setWidth(22);
+  wks.column(static_cast<char>(startLetter + 5)).setWidth(22);
+
+  // Rows size formatting TODO: Eliminating magic numbers
+  for (int row = startRow; row <= (startRow + 12); ++row)
+  {
+    wks.row(row).setHeight(45);
+  }
+
+  // Cell style formatting 
+ //OpenXLSX::XLStyle cellStyle;
+  //cellStyle.alignment().setWrapText(true);
+ // cellStyle.alignment().setVertical(XLAlignmentVertical::Center);
+ // cellStyle.border().setStyle(XLBorderStyle::Thin);
+
+  // Header cells formatting
+  std::string startCell = to_string(startLetter) + to_string(startRow);
+  std::string cellsToMerge = startCell + ":" +
+    to_string(static_cast<char>(startLetter + 5)) + to_string(startRow);
+  wks.mergeCells(cellsToMerge);
+  wks.cell(startCell).value() = headerText;
+ // wks.cell(startCell).style() = headerStyle;
+
+  // Fill days 
+  std::array<string, 5> days = {
+      "PONIEDZIAŁEK", "WTOREK", "ŚRODA", "CZWARTEK", "PIĄTEK"
+  };
+
+  for (int i = 0; i < days.size(); i++)
+  {
+      std::string cell = std::string(1, static_cast<char>(startLetter + 1 + i)) + to_string(startRow + 1);
+      wks.cell(cell).value() = days[i];
+      //wks.cell(cell).style() = headerStyle;
+  }
+
+  // Fill Units numbers
+  for (int i = 1; i <= programConfig::maxNoOfAvailableUnits; ++i)
+  {
+      std::string cell = "A" + std::to_string(i + startRow + 2);
+      wks.cell(cell).value() = i;
+      //wks.cell(cell).style() = headerStyle;
+  }
+
+  // Format assignment cells
+  for (std::size_t row = 0; row < programConfig::maxNoOfAvailableUnits; row++)
+  {
+    for (std::size_t col = 0; col < programConfig::maxNoOfAvailableDays; col++)
+    {
+      char letter = static_cast<char>(startLetter + col);
+      int rowIndex = static_cast<int>(startRow + row);
+      std::string cell = std::string(1, letter) + std::to_string(rowIndex);
+      //wks.cell(cell).style() = cellStyle;
+    }
+  }
+
+}
 
 int school::writeScheduledTimeplan()
 {
 
   // Write example data to worksheet
-  outputFileWks_ = outputFile_.workbook().worksheet("Sheet1");
+  timePlanWks_ = timePlanFile_.workbook().worksheet("Sheet1");
   
   constexpr char startLetter = 'A';
   constexpr int startRow = 1;
+
+  formatScheduleTable(timePlanFile_, timePlanWks_, startLetter, startRow, "Plan lekcji");
 
   for (std::size_t row = 0; row < scheduledTimeplan_.size(); row++)
   {
@@ -988,17 +1103,17 @@ int school::writeScheduledTimeplan()
       std::string cell = std::string(1, letter) + std::to_string(rowIndex);
       if (scheduledTimeplan_[row][col].isScheduled())
       {
-        outputFileWks_.cell(cell).value() = scheduledTimeplan_[row][col].getUnit();
+        timePlanWks_.cell(cell).value() = scheduledTimeplan_[row][col].getUnit();
       }
       else
       {
-        outputFileWks_.cell(cell).value() = "";
+        timePlanWks_.cell(cell).value() = "";
       }
     }
   }
 
   // Save file
-  outputFile_.save();
+  timePlanFile_.save();
   return 1;
 }
 

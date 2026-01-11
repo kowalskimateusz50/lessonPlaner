@@ -19,7 +19,7 @@ class school
     school(ProgramSettings& programSettings, Logging& logger);
     ~school();
     void prepareInputDataFile();
-    void prepareOutputDataFile(); 
+    void prepareOutputDataFiles();
     int readTeachersAvailability();
     void showTeachersAvailability();
     int readDepartmentsAvailability();
@@ -30,8 +30,8 @@ class school
     uint findLowestAvailableDepartment(std::vector<department>& departments,
                                        std::vector<teacher>& teachers,
                                        std::vector<TeacherAssigner>& assignments,
-                                       std::array<std::array<ScheduledUnit, 
-                                       programConfig::maxNoOfAvailableDays>, 
+                                       std::array<std::array<ScheduledUnit,
+                                       programConfig::maxNoOfAvailableDays>,
                                        programConfig::maxNoOfAvailableUnits>& scheduledTimeplan);
     bool findSuitableUnit(std::vector<teacher>& teachers,
                           department& department,
@@ -39,6 +39,12 @@ class school
                           uint& unitRowIndex,
                           uint& unitColIndex,
                           uint& assignmentIndex);
+    //OpenXLSX::XLStyleIndex createHeaderStyle(OpenXLSX::XLDocument& doc);
+    void formatScheduleTable(OpenXLSX::XLDocument& doc,
+                             OpenXLSX::XLWorksheet& wks,
+                             const char startLetter,
+                             const int startRow,
+                             std::string headerText);
     int writeScheduledTimeplan();
     uint countNotScheduledDepartments(std::vector<department>& departments);
 
@@ -47,8 +53,10 @@ class school
     Logging& logger_;
     OpenXLSX::XLDocument inputFile_;
     OpenXLSX::XLWorksheet inputFileWks_;
-    OpenXLSX::XLDocument outputFile_;    
-    OpenXLSX::XLWorksheet outputFileWks_;
+    OpenXLSX::XLDocument timePlanFile_;
+    OpenXLSX::XLWorksheet timePlanWks_;
+    OpenXLSX::XLDocument teacherPlanFile_;
+    OpenXLSX::XLWorksheet teacherPlanWks_;
 
     std::vector<teacher> teachers_;
     std::vector<department> departments_;

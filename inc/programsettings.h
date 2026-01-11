@@ -18,7 +18,8 @@ class ProgramSettings
 {
   private:
     std::string inputFilePath_;
-    std::string outputFilePath_;
+    std::string timePlanFilePath_;
+    std::string teacherPlanFilePath_;
     bool isLogModeOn_;
     bool isLogToConsoleOn_;
     bool isLogToFileOn_;
@@ -27,9 +28,10 @@ class ProgramSettings
     enum class settingsFileLines : int
     {
       inputFile = 0,
-      outputFile,
+      timePlanFile,
+      teacherPlanFile,
       isLogModeOn,
-      pathToLogFile
+      logFile
     };
 
   public:
@@ -39,7 +41,8 @@ class ProgramSettings
     bool isLogToConsoleOn();
     bool isLogToFileOn();
     std::string getInputFilePath();
-    std::string getOutputFilePath();
+    std::string getTimePlanFilePath();
+    std::string getTeacherPlanFilePath();    
     std::string getLogFilePath();
 };
 

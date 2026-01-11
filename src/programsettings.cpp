@@ -42,9 +42,9 @@ int ProgramSettings::readProgramSettings()
           }
           break;
 
-        case settingsFileLines::outputFile:
+        case settingsFileLines::timePlanFile:
           verifyLineContent = "";
-          verifyLinePattern = "plik_wynikowy='";
+          verifyLinePattern = "plik_plan_lekcji='";
           for (int i = 0; i < verifyLinePattern.size(); i++)
           {
             verifyLineContent += line[i];
@@ -53,7 +53,24 @@ int ProgramSettings::readProgramSettings()
           {
             for (int i = verifyLinePattern.size(); i < (line.size() - 1) ; i++)
             {
-              outputFilePath_ += line[i];
+              timePlanFilePath_ += line[i];
+            }
+            readSettingsStatus++;
+          }
+          break;
+
+        case settingsFileLines::teacherPlanFile:
+          verifyLineContent = "";
+          verifyLinePattern = "plik_plan_nauczycieli='";
+          for (int i = 0; i < verifyLinePattern.size(); i++)
+          {
+            verifyLineContent += line[i];
+          }
+          if (verifyLineContent == verifyLinePattern && line[line.size() - 1] == '\'')
+          {
+            for (int i = verifyLinePattern.size(); i < (line.size() - 1) ; i++)
+            {
+              teacherPlanFilePath_ += line[i];
             }
             readSettingsStatus++;
           }
@@ -73,12 +90,12 @@ int ProgramSettings::readProgramSettings()
             {
               tmpIsLogModeOn += line[i];
             }
-            tmpIsLogModeOn == "aktywny" ? true : false;
+            isLogModeOn_ = tmpIsLogModeOn == "aktywny" ? true : false;
             readSettingsStatus++;
           }
           break;
 
-        case settingsFileLines::pathToLogFile:
+        case settingsFileLines::logFile:
           verifyLineContent = "";
           verifyLinePattern = "plik_diagnostyczny='";
           for (int i = 0; i < verifyLinePattern.size(); i++)
@@ -116,17 +133,22 @@ bool ProgramSettings::isLogToFileOn()
   return isLogToFileOn_;
 }
 
-std::string ProgramSettings::getLogFilePath()
-{
-    return logFilePath_;
-}
-
 std::string ProgramSettings::getInputFilePath()
 {
     return inputFilePath_;
 }
 
-std::string ProgramSettings::getOutputFilePath()
+std::string ProgramSettings::getTimePlanFilePath()
 {
-    return outputFilePath_;
+    return timePlanFilePath_;
+}
+
+std::string ProgramSettings::getTeacherPlanFilePath()
+{
+    return timePlanFilePath_;
+}
+
+std::string ProgramSettings::getLogFilePath()
+{
+    return logFilePath_;
 }
