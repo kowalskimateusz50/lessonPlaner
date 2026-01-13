@@ -62,19 +62,29 @@ void school::prepareOutputDataFiles()
         }
     }
 
-    // Open and create output wks
-
+    // Create and open time plan file
     try
     {
-        timePlanFile_.create(timePlanFilePath, OpenXLSX::XLForceOverwrite);   // Create new time plan file wks
-        timePlanFile_.open(timePlanFilePath);     // Open new time plan file path wks
-        teacherPlanFile_.create(teacherPlanFilePath, OpenXLSX::XLForceOverwrite);   // Create new time plan file wks
-        teacherPlanFile_.open(teacherPlanFilePath);     // Open new time plan file path wks
+      timePlanFile_.create(timePlanFilePath, OpenXLSX::XLForceOverwrite);   // Create new time plan file
+      timePlanFile_.open(timePlanFilePath);     // Open new time plan file path
+
     }
     catch (const std::exception& e)
     {
         std::cerr << "Failed to create/open XLSX file: " << e.what() << '\n';
         return;
+    }
+
+    // Create and open teacher plan file
+    try
+    {
+      teacherPlanFile_.create(teacherPlanFilePath, OpenXLSX::XLForceOverwrite);   // Create new teacher plan file
+      teacherPlanFile_.open(teacherPlanFilePath);     // Open new teacher plan file path
+    }
+    catch (const std::exception& e)
+    {
+      std::cerr << "Failed to create/open XLSX file: " << e.what() << '\n';
+      return;
     }
 
 }
@@ -238,6 +248,20 @@ void school::showTeachersAssignment()
                     M_LOG_ENABLED,
                     (string)"LOG.11: school.cpp school::showTeachersAssignment()" +
                     logMessage.str());
+}
+
+uint school::countNotScheduledDepartments(std::vector<department>& departments)
+{
+  uint counter = 0;
+  for (auto& department : departments)
+  {
+    if ((department.getState() == department::State::ScheduleCombinedUnits) ||
+        (department.getState() == department::State::ScheduleSingleUnit))
+    {
+      counter++;
+    }
+  }
+  return counter;
 }
 
 uint school::findLowestAvailableDepartment(std::vector<department>& departments,
@@ -986,8 +1010,8 @@ void school::formatTimePlan(OpenXLSX::XLDocument& timePlanFile,
   auto& formats = timePlanFile.styles().cellFormats();
 
   // Colors setting
-  OpenXLSX::XLColor greenDark("FF7FBF5F");   // pasek tytułu
-  OpenXLSX::XLColor greenLight("FFA9D18E");  // nagłówki
+  OpenXLSX::XLColor greenDark("FF7FBF5F");   // title bar
+  OpenXLSX::XLColor greenLight("FFA9D18E");  // header
   OpenXLSX::XLColor black("FF000000");
 
   // Font for title
@@ -1045,7 +1069,7 @@ void school::formatTimePlan(OpenXLSX::XLDocument& timePlanFile,
   wks.cell(startCell) = headerText;
   wks.mergeCells(cellsToMerge);
   wks.cell(startCell).setCellFormat(titleFormat);
-  wks.row(1).setHeight(35);
+  wks.row(startRow).setHeight(35);
 
   // Days headers
   std::array<std::string, programConfig::maxNoOfAvailableDays + 1> headers = {
@@ -1085,10 +1109,10 @@ void school::formatTimePlan(OpenXLSX::XLDocument& timePlanFile,
 
 }
 
-int school::writeScheduledTimeplan()
+int school::writeScheduledTimePlan()
 {
 
-  // Write example data to worksheet
+  // Get worksheet from doc
   timePlanWks_ = timePlanFile_.workbook().worksheet("Sheet1");
 
   formatTimePlan(timePlanFile_, 'A', 1, "Plan lekcji");
@@ -1119,17 +1143,47 @@ int school::writeScheduledTimeplan()
   return 1;
 }
 
-uint school::countNotScheduledDepartments(std::vector<department>& departments)
+int school::writeScheduledTeacherPlan()
 {
-  uint counter = 0;
-  for (auto& department : departments)
+  constexpr int teacherPlanOffset = 14;
+
+  // Get worksheet from doc
+  teacherPlanWks_ = teacherPlanFile_.workbook().worksheet("Sheet1");
+
+  char startLetter = 'A';
+  int startRow = 1;
+
+  for (int i = 0; i < teachers_.size(); i++)
   {
-    if ((department.getState() == department::State::ScheduleCombinedUnits) ||
-        (department.getState() == department::State::ScheduleSingleUnit))
+    std::string teacherName = teachers_[i].getName();
+    // Prepare table for data
+    formatTimePlan(teacherPlanFile_, startLetter, startRow, teacherName);
+
+    for (std::size_t row = 0; row < scheduledTimeplan_.size(); row++)
     {
-      counter++;
+      for (std::size_t col = 0; col < scheduledTimeplan_[row].size(); col++)
+      {
+        char letter = static_cast<char>(startLetter + 1 + col);
+        int rowIndex = static_cast<int>(startRow + 2 + row);
+        std::string cell = std::string(1, letter) + std::to_string(rowIndex);
+        if (scheduledTimeplan_[row][col].hasThisTeacher(teacherName))
+        {
+          teacherPlanWks_.cell(cell).value() = 
+            scheduledTimeplan_[row][col].getUnitWithAssignedTeacher(teacherName);
+        }
+        else
+        {
+          teacherPlanWks_.cell(cell).value() = "";
+        }
+      }
     }
+
+    startRow += teacherPlanOffset;
   }
-  return counter;
+
+  
+  // Save file
+  teacherPlanFile_.save();
+  return 1;
 }
 

@@ -26,6 +26,7 @@ class school
     void showDepartmentsAvailability();
     int readTeachersAssignment();
     void showTeachersAssignment();
+    uint countNotScheduledDepartments(std::vector<department>& departments);
     uint scheduleTimeTable();
     uint findLowestAvailableDepartment(std::vector<department>& departments,
                                        std::vector<teacher>& teachers,
@@ -43,8 +44,8 @@ class school
                         const char startLetter,
                         const int startRow,
                         std::string headerText);
-    int writeScheduledTimeplan();
-    uint countNotScheduledDepartments(std::vector<department>& departments);
+    int writeScheduledTimePlan();
+    int writeScheduledTeacherPlan();
 
   private:
     ProgramSettings& programSettings_;

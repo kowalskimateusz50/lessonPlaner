@@ -145,7 +145,7 @@ std::string ProgramSettings::getTimePlanFilePath()
 
 std::string ProgramSettings::getTeacherPlanFilePath()
 {
-    return timePlanFilePath_;
+    return teacherPlanFilePath_;
 }
 
 std::string ProgramSettings::getLogFilePath()

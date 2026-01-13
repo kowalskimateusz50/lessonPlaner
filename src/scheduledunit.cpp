@@ -21,6 +21,7 @@ bool ScheduledUnit::isFull(std::size_t noOfAssignedTeachers)
 
 bool ScheduledUnit::hasThisTeacher(std::string teacherName)
 {
+
   for (auto& assignment : assignments_)
   {
     for (auto& teacher : assignment.assignedTeachers)
@@ -76,6 +77,22 @@ std::string ScheduledUnit::getUnit()
   return ssMessage.str();
 }
 
+std::string ScheduledUnit::getUnitWithAssignedTeacher(std::string teacher)
+{
+  std::stringstream ssMessage;
+  for (int i = 0; i < assignments_.size(); i++)
+  {    
+    for (const auto& assignedTeacher : assignments_[i].assignedTeachers)
+    {
+      if (assignedTeacher == teacher)
+      {
+        ssMessage << assignments_[i].department;
+      }
+    }
+  }
+  return ssMessage.str();
+}
+
 uint ScheduledUnit::getYearFromDepartmentName(std::string name)
 {
   // Get year from first character in string
@@ -85,7 +102,7 @@ uint ScheduledUnit::getYearFromDepartmentName(std::string name)
   {
     return year - '0';
   }
-  
+
   return 0;
 }
 
