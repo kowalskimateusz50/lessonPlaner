@@ -39,13 +39,10 @@ class school
                           uint& unitRowIndex,
                           uint& unitColIndex,
                           uint& assignmentIndex);
-    /*void applyHeaderStyle(OpenXLSX::XLDocument& doc, OpenXLSX::XLCell& cell);
-    void formatScheduleTable(OpenXLSX::XLDocument& doc,
-                             OpenXLSX::XLWorksheet& wks,
-                             const char startLetter,
-                             const int startRow,
-                             std::string headerText); */
-    void formatTimePlan(OpenXLSX::XLDocument& timePlanFile);
+    void formatTimePlan(OpenXLSX::XLDocument& timePlanFile,
+                        const char startLetter,
+                        const int startRow,
+                        std::string headerText);
     int writeScheduledTimeplan();
     uint countNotScheduledDepartments(std::vector<department>& departments);
 
