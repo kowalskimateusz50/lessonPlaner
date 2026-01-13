@@ -15,7 +15,7 @@ bool ScheduledUnit::isScheduled()
 
 bool ScheduledUnit::isFull(std::size_t noOfAssignedTeachers)
 {
-  return ((noOfAssignedTeachers_ + static_cast<uint>(noOfAssignedTeachers)) >
+  return ((noOfAssignedTeachers_ + static_cast<uint32_t>(noOfAssignedTeachers)) >
           (programConfig::maxNoOfTeachersInUnit));
 }
 
@@ -93,7 +93,7 @@ std::string ScheduledUnit::getUnitWithAssignedTeacher(std::string teacher)
   return ssMessage.str();
 }
 
-uint ScheduledUnit::getYearFromDepartmentName(std::string name)
+uint32_t ScheduledUnit::getYearFromDepartmentName(std::string name)
 {
   // Get year from first character in string
   char year = name[0];
@@ -109,7 +109,7 @@ uint ScheduledUnit::getYearFromDepartmentName(std::string name)
 bool ScheduledUnit::isSuitableYearDifference(std::string departmentNameToSchedule)
 {
 
-  uint yearToSchedule = getYearFromDepartmentName(departmentNameToSchedule);
+  uint32_t yearToSchedule = getYearFromDepartmentName(departmentNameToSchedule);
 
   if (assignments_.size() == 0)
   {
@@ -118,7 +118,7 @@ bool ScheduledUnit::isSuitableYearDifference(std::string departmentNameToSchedul
 
   for (const auto& assignment : assignments_)
   {
-    uint scheduledYear = getYearFromDepartmentName(assignment.department);
+    uint32_t scheduledYear = getYearFromDepartmentName(assignment.department);
     int yearDiff = static_cast<int>(scheduledYear) - static_cast<int>(yearToSchedule);
     if (std::abs(yearDiff) > programConfig::allowedYearDifference)
     {
@@ -131,7 +131,7 @@ bool ScheduledUnit::isSuitableYearDifference(std::string departmentNameToSchedul
 
 bool ScheduledUnit::isOptimalTeacherUsage(std::size_t noOfAssignedTeachers)
 {
-  return ((noOfAssignedTeachers_ + static_cast<uint>(noOfAssignedTeachers)) ==
+  return ((noOfAssignedTeachers_ + static_cast<uint32_t>(noOfAssignedTeachers)) ==
           (programConfig::maxNoOfTeachersInUnit));
 }
 

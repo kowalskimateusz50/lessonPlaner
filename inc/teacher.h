@@ -18,7 +18,7 @@ class teacher : public Availability
 {
   public:
     teacher(OpenXLSX::XLWorksheet& wks,
-            uint& initialsRowPointer,
+            uint32_t& initialsRowPointer,
             Logging& logger);
 };
 

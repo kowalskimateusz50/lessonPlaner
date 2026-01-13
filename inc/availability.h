@@ -25,7 +25,7 @@ class Availability
     };
 
     Availability(OpenXLSX::XLWorksheet& wks,
-                 uint& initialsRowPointer,
+                 uint32_t& initialsRowPointer,
                  Logging& logger);
     int readAvailability();
     int findAndCheckInitials();
@@ -41,7 +41,7 @@ class Availability
 
     OpenXLSX::XLWorksheet& wks_;
     Logging& logger_;
-    uint& initialsRowPointer_;
+    uint32_t& initialsRowPointer_;
 
     availabilitySettings availabilitySettings_;
     std::string initials_;

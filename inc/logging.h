@@ -4,12 +4,9 @@
 #include <fstream>
 #include <mutex>
 #include <string>
-#include <fstream>
 #include <chrono>
 #include <ctime>
 #include <filesystem>
-
-namespace fs = std::filesystem;
 
 /* Define types of messages */
 #define M_INFO 1

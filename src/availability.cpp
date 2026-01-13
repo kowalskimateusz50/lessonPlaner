@@ -1,7 +1,7 @@
 #include "availability.h"
 
 Availability::Availability(OpenXLSX::XLWorksheet& wks,
-                           uint& initialsRowPointer,
+                           uint32_t& initialsRowPointer,
                            Logging& logger)
   : wks_(wks), initialsRowPointer_(initialsRowPointer), logger_(logger) {} // initialization list
 

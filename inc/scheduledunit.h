@@ -16,12 +16,12 @@ class ScheduledUnit
     void scheduleUnit(Assignment assignment);
     std::string getUnit();
     std::string getUnitWithAssignedTeacher(std::string teacher);
-    uint getYearFromDepartmentName(std::string name);
+    uint32_t getYearFromDepartmentName(std::string name);
     bool isSuitableYearDifference(std::string departmentNameToSchedule);
     bool isOptimalTeacherUsage(std::size_t noOfAssignedTeachers);
 
   private:
     bool isScheduled_;
-    uint noOfAssignedTeachers_;
+    uint32_t noOfAssignedTeachers_;
     std::vector<Assignment> assignments_;
 };

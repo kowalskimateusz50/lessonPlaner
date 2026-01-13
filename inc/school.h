@@ -26,9 +26,9 @@ class school
     void showDepartmentsAvailability();
     int readTeachersAssignment();
     void showTeachersAssignment();
-    uint countNotScheduledDepartments(std::vector<department>& departments);
-    uint scheduleTimeTable();
-    uint findLowestAvailableDepartment(std::vector<department>& departments,
+    uint32_t countNotScheduledDepartments(std::vector<department>& departments);
+    uint32_t scheduleTimeTable();
+    uint32_t findLowestAvailableDepartment(std::vector<department>& departments,
                                        std::vector<teacher>& teachers,
                                        std::vector<TeacherAssigner>& assignments,
                                        std::array<std::array<ScheduledUnit,
@@ -37,9 +37,9 @@ class school
     bool findSuitableUnit(std::vector<teacher>& teachers,
                           department& department,
                           std::vector<TeacherAssigner>& assignments,
-                          uint& unitRowIndex,
-                          uint& unitColIndex,
-                          uint& assignmentIndex);
+                          uint32_t& unitRowIndex,
+                          uint32_t& unitColIndex,
+                          uint32_t& assignmentIndex);
     void formatTimePlan(OpenXLSX::XLDocument& timePlanFile,
                         const char startLetter,
                         const int startRow,
@@ -64,9 +64,9 @@ class school
     std::array<std::array<ScheduledUnit, programConfig::maxNoOfAvailableDays>, 
       programConfig::maxNoOfAvailableUnits> scheduledTimeplan_;
 
-    uint teachersCounter;
-    uint departmentsCounter;
-    uint assignmentsCounter;
-    uint scheduledDepartmentsCounter;
+    uint32_t teachersCounter;
+    uint32_t departmentsCounter;
+    uint32_t assignmentsCounter;
+    uint32_t scheduledDepartmentsCounter;
 };
 

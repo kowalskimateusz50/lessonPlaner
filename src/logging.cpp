@@ -1,5 +1,7 @@
 #include "logging.h"
 
+namespace fs = std::filesystem;
+
 Logging::Logging(bool isLogModeOn,
                  bool isLogToConsoleOn,
                  bool isLogToFileOn, 

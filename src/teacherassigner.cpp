@@ -1,7 +1,7 @@
 #include "teacherassigner.h"
 
 TeacherAssigner::TeacherAssigner(OpenXLSX::XLWorksheet& wks,
-                                     uint& rowPointer,
+                                     uint32_t& rowPointer,
                                      Logging& logger)
   : wks_(wks), rowPointer_(rowPointer), logger_(logger) // initialization list
 {

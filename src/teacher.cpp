@@ -1,7 +1,7 @@
 #include "teacher.h"
 
 teacher::teacher(OpenXLSX::XLWorksheet& wks,
-                 uint& initialsRowPointer,
+                 uint32_t& initialsRowPointer,
                  Logging& logger)
   : Availability(wks, initialsRowPointer, logger) // initialization list
 {

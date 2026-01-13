@@ -17,27 +17,27 @@ class TeacherAssigner
 
     struct Settings 
     {
-      uint minDepartmentLength;
-      uint maxDepartmentLength;
-      uint minTeacherInitialsLength;
-      uint maxTeacherInitialsLength;
+      uint32_t minDepartmentLength;
+      uint32_t maxDepartmentLength;
+      uint32_t minTeacherInitialsLength;
+      uint32_t maxTeacherInitialsLength;
       std::string yearColumn;
       std::string departmentColumn;
       std::string assignedTeacherColumn1;
       char asignedTeachersBeginCol;
       char asignedTeachersEndCol;
-      uint maxNoAssignedTeachers;
+      uint32_t maxNoAssignedTeachers;
     };
 
     OpenXLSX::XLWorksheet& wks_;
     Logging& logger_;
-    uint& rowPointer_;
+    uint32_t& rowPointer_;
     Settings settings_;
 
   public:
 
     TeacherAssigner(OpenXLSX::XLWorksheet& wks,
-                    uint& rowPointer,
+                    uint32_t& rowPointer,
                     Logging& logger);
     bool readAssignment();
     Assignment getAssignment();

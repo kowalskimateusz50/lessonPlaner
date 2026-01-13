@@ -1,7 +1,7 @@
 #include "department.h"
 
 department::department(OpenXLSX::XLWorksheet& wks,
-                       uint& initialsRowPointer,
+                       uint32_t& initialsRowPointer,
                        Logging& logger)
   : Availability(wks, initialsRowPointer, logger) // initialization list
 {
@@ -17,7 +17,7 @@ department::department(OpenXLSX::XLWorksheet& wks,
   availabilitySettings_.initialsToAvailabilityRowOffset = 1;
   // Always initialize department as not scheduled
   state_ = State::Idle;
-  scheduledCol_ = std::numeric_limits<uint>::max();
+  scheduledCol_ = std::numeric_limits<uint32_t>::max();
 }
 
 department::State department::getState()
@@ -46,14 +46,14 @@ std::string department::stateToString(department::State state)
   return "Unknown";
 }
 
-void department::setScheduledCol(uint col)
+void department::setScheduledCol(uint32_t col)
 {
   scheduledCol_ = col;
 }
 
-bool department::isNotScheduledAtThisCol(uint col)
+bool department::isNotScheduledAtThisCol(uint32_t col)
 {
-  if ((scheduledCol_ != std::numeric_limits<uint>::max()) &&
+  if ((scheduledCol_ != std::numeric_limits<uint32_t>::max()) &&
       (scheduledCol_ != col))
   {
     return true;

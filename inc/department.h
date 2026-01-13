@@ -28,16 +28,16 @@ class department  : public Availability
     };
 
     department(OpenXLSX::XLWorksheet& wks,
-               uint& initialsRowPointer,
+               uint32_t& initialsRowPointer,
                Logging& logger);
     void setState(State state);
     State getState();
     std::string stateToString(State state);
-    void setScheduledCol(uint col);
-    bool isNotScheduledAtThisCol(uint col);
+    void setScheduledCol(uint32_t col);
+    bool isNotScheduledAtThisCol(uint32_t col);
 
   private:
     State state_;
-    uint scheduledCol_;
+    uint32_t scheduledCol_;
 };
 
