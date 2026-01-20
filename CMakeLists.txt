@@ -25,8 +25,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #CMake flags (in order to do not need any other libraries)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
-set(EXECUTABLE_NAME lessonPlanner)
+set(EXECUTABLE_NAME planerLekcji)
 set(LIBRARY_NAME Library)
+
+set(CMAKE_EXE_LINKER_FLAGS "-static -static-libgcc -static-libstdc++")
 
 add_subdirectory(src)
 add_subdirectory(external)
