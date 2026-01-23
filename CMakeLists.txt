@@ -1,8 +1,9 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.28)
 
 project(lessonPlanner VERSION 1.0.0 LANGUAGES CXX)
 
 find_package(Doxygen)
+#find_package(yaml-cpp REQUIRED)
 
 if(DOXYGEN_FOUND)
     set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile)
@@ -18,8 +19,8 @@ if(DOXYGEN_FOUND)
     )
 endif()
 
-#C++ 20 settings
-set(CMAKE_CXX_STANDARD 20)
+#C++ 17 settings
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #CMake flags (in order to do not need any other libraries)

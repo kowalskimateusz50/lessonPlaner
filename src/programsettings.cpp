@@ -7,115 +7,28 @@ ProgramSettings::ProgramSettings()
   isLogToConsoleOn_ = true;
   isLogToFileOn_ = true;
   inputFilePath_ = "";
+  timePlanFilePath_ = "";
+  teacherPlanFilePath_ = "";
   logFilePath_ = "";
+
 }
 
 int ProgramSettings::readProgramSettings()
 {
-  int readSettingsStatus = 0;
-  std::ifstream settingsFile("ustawienia.txt");
-  int lineIterator = 0;
-  std::string verifyLineContent = "";
-  std::string verifyLinePattern = "";
-  std::string line = "";
+  YAML::Node config = YAML::LoadFile("ustawienia.yaml");
 
-  if (settingsFile.is_open())
+  inputFilePath_ = config["ustawienia"]["dane_wejsciowe"].as<std::string>();
+  timePlanFilePath_ = config["ustawienia"]["plan_lekcji"].as<std::string>();
+  teacherPlanFilePath_ = config["ustawienia"]["plan_nauczycieli"].as<std::string>();
+  isLogModeOn_ = config["ustawienia_diagnostyczne"]["tryb_diagnostyczny"].as<bool>();
+  logFilePath_ = config["ustawienia_diagnostyczne"]["plik_diagnostyczny"].as<std::string>();
+
+  if (inputFilePath_ != "" && timePlanFilePath_ != "" && teacherPlanFilePath_ != "" &&
+      logFilePath_ != "")
   {
-    while(getline(settingsFile, line))
-    {
-      switch (static_cast<settingsFileLines>(lineIterator))
-      {
-        case settingsFileLines::inputFile:
-          verifyLineContent = "";
-          verifyLinePattern = "plik_wsadowy='";
-          for (int i = 0; i < verifyLinePattern.size(); i++)
-          {
-            verifyLineContent += line[i];
-          }
-          if (verifyLineContent == verifyLinePattern && line[line.size() - 1] == '\'')
-          {
-            for (int i = verifyLinePattern.size(); i < (line.size() - 1) ; i++)
-            {
-              inputFilePath_ += line[i];
-            }
-            readSettingsStatus++;
-          }
-          break;
-
-        case settingsFileLines::timePlanFile:
-          verifyLineContent = "";
-          verifyLinePattern = "plik_plan_lekcji='";
-          for (int i = 0; i < verifyLinePattern.size(); i++)
-          {
-            verifyLineContent += line[i];
-          }
-          if (verifyLineContent == verifyLinePattern && line[line.size() - 1] == '\'')
-          {
-            for (int i = verifyLinePattern.size(); i < (line.size() - 1) ; i++)
-            {
-              timePlanFilePath_ += line[i];
-            }
-            readSettingsStatus++;
-          }
-          break;
-
-        case settingsFileLines::teacherPlanFile:
-          verifyLineContent = "";
-          verifyLinePattern = "plik_plan_nauczycieli='";
-          for (int i = 0; i < verifyLinePattern.size(); i++)
-          {
-            verifyLineContent += line[i];
-          }
-          if (verifyLineContent == verifyLinePattern && line[line.size() - 1] == '\'')
-          {
-            for (int i = verifyLinePattern.size(); i < (line.size() - 1) ; i++)
-            {
-              teacherPlanFilePath_ += line[i];
-            }
-            readSettingsStatus++;
-          }
-          break;
-
-        case settingsFileLines::isLogModeOn:
-          verifyLineContent = "";
-          verifyLinePattern = "tryb_diagnostyczny='";
-          for (int i = 0; i < verifyLinePattern.size(); i++)
-          {
-            verifyLineContent += line[i];
-          }
-          if (verifyLineContent == verifyLinePattern && line[line.size() - 1] == '\'')
-          {
-            std::string tmpIsLogModeOn = "";
-            for (int i = verifyLinePattern.size(); i < (line.size() - 1) ; i++)
-            {
-              tmpIsLogModeOn += line[i];
-            }
-            isLogModeOn_ = tmpIsLogModeOn == "aktywny" ? true : false;
-            readSettingsStatus++;
-          }
-          break;
-
-        case settingsFileLines::logFile:
-          verifyLineContent = "";
-          verifyLinePattern = "plik_diagnostyczny='";
-          for (int i = 0; i < verifyLinePattern.size(); i++)
-          {
-            verifyLineContent += line[i];
-          }
-          if (verifyLineContent == verifyLinePattern && line[line.size() - 1] == '\'')
-          {
-            for (int i = verifyLinePattern.size(); i < (line.size() - 1) ; i++)
-            {
-              logFilePath_ += line[i];
-            }
-            readSettingsStatus++;
-          }
-          break;
-      }
-      lineIterator++;
-    }
+    return 0;
   }
-return readSettingsStatus;
+  return 1;
 }
 
 bool ProgramSettings::isLogModeOn()

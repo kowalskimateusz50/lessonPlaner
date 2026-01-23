@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <logging.h>
+#include <yaml-cpp/yaml.h>
 
 namespace programConfig 
 {
