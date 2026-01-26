@@ -16,6 +16,7 @@ school::school(ProgramSettings& programSettings, Logging& logger)
   departmentsCounter = 0;
   assignmentsCounter = 0;
   scheduledDepartmentsCounter = 0;
+  failedScheduledCounter = 0;
 }
 
 school::~school()
@@ -594,7 +595,7 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
                     }
                   }
                 }
-                // Assign next state of scheduling 
+                // Assign next state of scheduling
                 department.setState(department::State::ScheduledCombinedUnits);
                 return true;
               }
@@ -679,12 +680,6 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
     {
       uint32_t unitIsSuitableForTeachers = 0;
       std::size_t noOfAssignedTeachers = teachersAvailability.size();
-
-      std::string departmentToDebug = "3BSb";
-      if (departmentName == departmentToDebug)
-      {
-        std::cout << "Department debug: " << departmentToDebug;
-      }
 
       // 1st schedule in the most efficient way from teacher point of view
       for (uint32_t uRow = 0; uRow < departmentAvailability.size(); uRow++)
@@ -848,7 +843,6 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
   return false;
 }
 
-
 uint32_t school::scheduleTimeTable()
 {
   // Copy local copies of input data as read on
@@ -955,15 +949,24 @@ uint32_t school::scheduleTimeTable()
               departments[indexOfDepartmentToSchedule].getState());
         departments[indexOfDepartmentToSchedule].setState(department::State::SchedulingImpossible);
         failedScheduled++;
+        // UI logging
+        schedulingFaults << "Nie można rozplanować klasy: " << 
+          departments[indexOfDepartmentToSchedule].getName() << std::endl <<
+            "Stan planowania: " << departments[indexOfDepartmentToSchedule].stateToStringUI(
+              departments[indexOfDepartmentToSchedule].getState()) << std::endl;
       }
 
     }
     else
     {
+      // Debug logging
       logMessage << "Step 1: FAILED: Department wasn't found: " <<
         indexOfDepartmentToSchedule << std::endl;
       departments[indexOfDepartmentToSchedule].setState(department::State::SchedulingImpossible);
       failedScheduled++;
+
+      // UI logging
+      schedulingFaults << "Nie zostala znaleziona klasa do rozplanowania: " << std::endl;
     }
 
     logger_.appendLog(M_INFO,
@@ -983,11 +986,13 @@ uint32_t school::scheduleTimeTable()
   // Log summary report
   std::stringstream logMessage;
   logMessage << std::endl << "------------------ Summary report: ------------------" << std::endl <<
-  "Read teachers: " << teachersCounter << std::endl <<
-  "Read departments: " << departmentsCounter << std::endl <<
-  "Read assignments: " << assignmentsCounter << std::endl <<
-  "Scheduled departments: " << scheduledDepartmentsCounter << std::endl <<
-  "Failed scheduling: " << failedScheduled;
+    "Read teachers: " << teachersCounter << std::endl <<
+      "Read departments: " << departmentsCounter << std::endl <<
+        "Read assignments: " << assignmentsCounter << std::endl <<
+          "Scheduled departments: " << scheduledDepartmentsCounter << std::endl <<
+            "Failed scheduling: " << failedScheduled;
+
+  failedScheduledCounter = failedScheduled;
 
   logger_.appendLog(M_INFO,
                     M_LOG_ENABLED,
@@ -1117,6 +1122,8 @@ int school::writeScheduledTimePlan()
 
   formatTimePlan(timePlanFile_, 'A', 1, "Plan lekcji");
 
+  writeSchedulingInfo(timePlanFile_);
+
   constexpr char startLetter = 'B';
   constexpr int startRow = 3;
 
@@ -1140,6 +1147,98 @@ int school::writeScheduledTimePlan()
 
   // Save file
   timePlanFile_.save();
+  return 1;
+}
+
+int school::writeSchedulingInfo(OpenXLSX::XLDocument& timePlanFile)
+{
+  OpenXLSX::XLWorksheet wks = timePlanFile.workbook().worksheet(1);
+
+  auto& fonts   = timePlanFile.styles().fonts();
+  auto& fills   = timePlanFile.styles().fills();
+  auto& borders = timePlanFile.styles().borders();
+  auto& formats = timePlanFile.styles().cellFormats();
+
+  // Colors setting
+  OpenXLSX::XLColor greenDark("FF7FBF5F");   // title bar
+  OpenXLSX::XLColor greenLight("FFA9D18E");  // header
+  OpenXLSX::XLColor black("FF000000");
+
+  // Font for title
+  OpenXLSX::XLStyleIndex fontTitle = fonts.create();
+  fonts[fontTitle].setBold();
+  fonts[fontTitle].setFontSize(20); 
+
+  // Font settings
+  OpenXLSX::XLStyleIndex fontBold = fonts.create();
+  fonts[fontBold].setBold();
+
+  // Borders setting
+  OpenXLSX::XLStyleIndex borderThin = borders.create();
+  borders[borderThin].setOutline(true);
+  borders[borderThin].setLeft  (OpenXLSX::XLLineStyleThin, black);
+  borders[borderThin].setRight (OpenXLSX::XLLineStyleThin, black);
+  borders[borderThin].setTop   (OpenXLSX::XLLineStyleThin, black);
+  borders[borderThin].setBottom(OpenXLSX::XLLineStyleThin, black);
+
+  // Format title
+  OpenXLSX::XLStyleIndex titleFill = fills.create();
+  fills[titleFill].setPatternType(OpenXLSX::XLPatternSolid);
+  fills[titleFill].setColor(greenDark);
+
+  OpenXLSX::XLStyleIndex titleFormat = formats.create();
+  formats[titleFormat].setFontIndex(fontTitle);
+  formats[titleFormat].setFillIndex(titleFill);
+  formats[titleFormat].setBorderIndex(borderThin);
+  formats[titleFormat].alignment(OpenXLSX::XLCreateIfMissing).setHorizontal(OpenXLSX::XLAlignCenter);
+  formats[titleFormat].alignment(OpenXLSX::XLCreateIfMissing).setVertical(OpenXLSX::XLAlignCenter);
+
+  // Format header
+  OpenXLSX::XLStyleIndex headerFill = fills.create();
+  fills[headerFill].setPatternType(OpenXLSX::XLPatternSolid);
+  fills[headerFill].setColor(greenLight);
+
+  OpenXLSX::XLStyleIndex headerFormat = formats.create();
+  formats[headerFormat].setFontIndex(fontBold);
+  formats[headerFormat].setFillIndex(headerFill);
+  formats[headerFormat].setBorderIndex(borderThin);
+  formats[headerFormat].alignment(OpenXLSX::XLCreateIfMissing).setHorizontal(OpenXLSX::XLAlignCenter);
+  formats[headerFormat].alignment(OpenXLSX::XLCreateIfMissing).setVertical(OpenXLSX::XLAlignCenter);
+  formats[headerFormat].alignment(OpenXLSX::XLCreateIfMissing).setWrapText(true);
+
+  // Format cells
+  OpenXLSX::XLStyleIndex cellFormat = formats.create();
+  formats[cellFormat].setBorderIndex(borderThin);
+  formats[cellFormat].alignment(OpenXLSX::XLCreateIfMissing).setWrapText(true);
+  formats[cellFormat].alignment(OpenXLSX::XLCreateIfMissing).setVertical(OpenXLSX::XLAlignCenter);
+
+  // Title
+  std::string startCell = "H2";
+  wks.cell(startCell) = "Podsumowanie planowania";
+  wks.cell(startCell).setCellFormat(titleFormat);
+  wks.column("H").setWidth(50);
+
+  // Message cell 1
+  std::string messageCell1Addr = "H3";
+  std::stringstream messageCell1;
+  messageCell1 << "Odczytana z pliku ilość nauczycieli: " << teachersCounter << std::endl <<
+    "Odczytana z pliku ilość klas: " << departmentsCounter << std::endl;
+  wks.cell(messageCell1Addr) = messageCell1.str();
+
+  // Message cell 2
+  std::string messageCell2Addr = "H4";
+  std::stringstream messageCell2;
+  messageCell2 << "Odczytana z pliku ilość przypisań klas do nauczycieli: " << assignmentsCounter << std::endl <<
+      "Ilość rozplanowanych klas: " << scheduledDepartmentsCounter << std::endl;
+  wks.cell(messageCell2Addr) = messageCell2.str();
+
+  // Fault cell 1
+  std::string faultsCell1Addr = "H5";
+  if (failedScheduledCounter > 0)
+  {
+    wks.cell(faultsCell1Addr) = schedulingFaults.str();
+  }
+
   return 1;
 }
 

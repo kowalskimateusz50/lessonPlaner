@@ -45,6 +45,7 @@ class school
                         const int startRow,
                         std::string headerText);
     int writeScheduledTimePlan();
+    int writeSchedulingInfo(OpenXLSX::XLDocument& timePlanFile);
     int writeScheduledTeacherPlan();
 
   private:
@@ -63,10 +64,13 @@ class school
 
     std::array<std::array<ScheduledUnit, programConfig::maxNoOfAvailableDays>, 
       programConfig::maxNoOfAvailableUnits> scheduledTimeplan_;
+    
+    std::stringstream schedulingFaults;
 
     uint32_t teachersCounter;
     uint32_t departmentsCounter;
     uint32_t assignmentsCounter;
     uint32_t scheduledDepartmentsCounter;
+    uint32_t failedScheduledCounter;
 };
 

@@ -33,6 +33,7 @@ class department  : public Availability
     void setState(State state);
     State getState();
     std::string stateToString(State state);
+    std::string stateToStringUI(State state);
     void setScheduledCol(uint32_t col);
     bool isNotScheduledAtThisCol(uint32_t col);
 
