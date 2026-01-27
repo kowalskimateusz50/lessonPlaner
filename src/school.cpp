@@ -2,7 +2,7 @@
 
 namespace fs = std::filesystem;
 
-school::school(ProgramSettings& programSettings, Logging& logger)
+School::School(ProgramSettings& programSettings, Logging& logger)
   : programSettings_(programSettings), logger_(logger) // initialization list
 {
   // Open input data file
@@ -10,36 +10,29 @@ school::school(ProgramSettings& programSettings, Logging& logger)
 
   // Open output data file
   prepareOutputDataFiles();
-
-  // Initialize counters
-  teachersCounter = 0;
-  departmentsCounter = 0;
-  assignmentsCounter = 0;
-  scheduledDepartmentsCounter = 0;
-  failedScheduledCounter = 0;
 }
 
-school::~school()
+School::~School()
 {
-  // Close input file
+  /// Close input file
   inputFile_.close();
 
-  // Close time plan file
+  /// Close time plan file
   timePlanFile_.close();
 
-  // Close teacher plan file
+  /// Close teacher plan file
   teacherPlanFile_.close();
 }
 
-void school::prepareInputDataFile()
+void School::prepareInputDataFile()
 {
-  //Preparing input file
+  /// Preparing input file
   inputFile_.open(programSettings_.getInputFilePath());
-  //Open input file worksheet
+  /// Open input file worksheet
   inputFileWks_ = inputFile_.workbook().worksheet(1);
 }
 
-void school::prepareOutputDataFiles()
+void School::prepareOutputDataFiles()
 {
   std::string timePlanFilePath = programSettings_.getTimePlanFilePath();
   std::string teacherPlanFilePath = programSettings_.getTeacherPlanFilePath();
@@ -93,13 +86,10 @@ void school::prepareOutputDataFiles()
 /**
  * @brief Funtion to read teacher availability
  *
- * @param[in] wks reference to excel works sheet document
- *
  * @return amount of read teachers
  */
-int school::readTeachersAvailability()
+int School::readTeachersAvailability()
 {
-  teachersCounter = 0;
   uint32_t rowPointer = 2;
   std::stringstream logMessage;
 
@@ -112,25 +102,25 @@ int school::readTeachersAvailability()
       break;
     }
 
-    teachersCounter++;
+    counters_.teachers++;
     teachers_.push_back(readTeacher);
-    logMessage << "\nFound teacher No.: " << teachersCounter << endl;
+    logMessage << "\nFound teacher No.: " << counters_.teachers << endl;
   }
 
-  logMessage << "\nStopped searching teachers, found: " << teachersCounter << " teachers" << endl;
+  logMessage << "\nStopped searching teachers, found: " << counters_.teachers << " teachers" << endl;
 
   logger_.appendLog(M_INFO,
                     M_LOG_ENABLED, 
-                    (std::string)"LOG.2: school.cpp school::readTeachersAvailability()" +
+                    (std::string)"LOG.2: School.cpp School::readTeachersAvailability()" +
                     logMessage.str());
 
-  return teachersCounter;
+  return counters_.teachers;
 }
 /**
  * @brief funtion to display teachers availability
  * 
  */
-void school::showTeachersAvailability()
+void School::showTeachersAvailability()
 {
     for (int i = 0; i < teachers_.size(); i++)
     {
@@ -145,9 +135,8 @@ void school::showTeachersAvailability()
  *
  * @return amount of read departments
  */
-int school::readDepartmentsAvailability()
+int School::readDepartmentsAvailability()
 {
-  departmentsCounter = 0;
   uint32_t rowPointer = 2;
   std::stringstream logMessage;
 
@@ -160,26 +149,26 @@ int school::readDepartmentsAvailability()
       break;
     }
 
-    departmentsCounter++;
+    counters_.departments++;
     readDepartment.setState(department::State::ScheduleCombinedUnits);
     departments_.push_back(readDepartment);
-    logMessage << "\nFound department No.: " << departmentsCounter << endl;
+    logMessage << "\nFound department No.: " << counters_.departments << endl;
   }
-  logMessage << "\nStopped searching departments: " << departmentsCounter << endl;
+  logMessage << "\nStopped searching departments: " << counters_.departments << endl;
 
   logger_.appendLog(M_INFO,
                     M_LOG_ENABLED,
-                    (std::string)"LOG.8: school.cpp school::readDepartmentsAvailability()" +
+                    (std::string)"LOG.8: School.cpp School::readDepartmentsAvailability()" +
                     logMessage.str());
 
-  return departmentsCounter;
+  return counters_.departments;
 }
 
 /**
  * @brief funtion to display departments availability
  * 
  */
-void school::showDepartmentsAvailability()
+void School::showDepartmentsAvailability()
 {
   for (auto& department : departments_)
   {
@@ -187,9 +176,8 @@ void school::showDepartmentsAvailability()
   }
 }
 
-int school::readTeachersAssignment()
+int School::readTeachersAssignment()
 {
-  assignmentsCounter = 0;
   uint32_t rowPointer = 3;
   std::stringstream logMessage;
 
@@ -202,13 +190,13 @@ int school::readTeachersAssignment()
       break;
     }
 
-    assignmentsCounter++;
+    counters_.assignments++;
 
     //Clear log stringstream
     logMessage.str("");
     logMessage.clear();
 
-    logMessage << "Found new assignment, no.: " << assignmentsCounter << endl;
+    logMessage << "Found new assignment, no.: " << counters_.assignments << endl;
     logMessage << "Department: " << readTeacherAssignment.getAssignedDepartment() << endl;
  
     for (const auto& teacher : readTeacherAssignment.getAssignedTeachers())
@@ -220,19 +208,19 @@ int school::readTeachersAssignment()
 
     logger_.appendLog(M_INFO,
                       M_LOG_ENABLED,
-                      (string)"LOG.9: school.cpp school::readTeachersAssignment()" +
+                      (string)"LOG.9: School.cpp School::readTeachersAssignment()" +
                       logMessage.str());
   }
 
   logger_.appendLog(M_INFO,
                     M_LOG_ENABLED,
-                    (string)"LOG.10: school.cpp school::readTeachersAssignment()" +
+                    (string)"LOG.10: School.cpp School::readTeachersAssignment()" +
                     (string)"Teacher assignment wasn't, stop finding");
 
-  return assignmentsCounter;
+  return counters_.assignments;
 }
 
-void school::showTeachersAssignment()
+void School::showTeachersAssignment()
 {
   std::stringstream logMessage;
 
@@ -247,11 +235,11 @@ void school::showTeachersAssignment()
   }
   logger_.appendLog(M_INFO,
                     M_LOG_ENABLED,
-                    (string)"LOG.11: school.cpp school::showTeachersAssignment()" +
+                    (string)"LOG.11: School.cpp School::showTeachersAssignment()" +
                     logMessage.str());
 }
 
-uint32_t school::countNotScheduledDepartments(std::vector<department>& departments)
+uint32_t School::countNotScheduledDepartments(std::vector<department>& departments)
 {
   uint32_t counter = 0;
   for (auto& department : departments)
@@ -265,7 +253,7 @@ uint32_t school::countNotScheduledDepartments(std::vector<department>& departmen
   return counter;
 }
 
-uint32_t school::findLowestAvailableDepartment(std::vector<department>& departments,
+uint32_t School::findLowestAvailableDepartment(std::vector<department>& departments,
                                            std::vector<teacher>& teachers,
                                            std::vector<TeacherAssigner>& assignments,
                                            std::array<std::array<ScheduledUnit, 
@@ -416,7 +404,7 @@ uint32_t school::findLowestAvailableDepartment(std::vector<department>& departme
 
   return lowestAvailabilityIndex;
 }
-bool school::findSuitableUnit(std::vector<teacher>& teachers,
+bool School::findSuitableUnit(std::vector<teacher>& teachers,
               department& department,
               std::vector<TeacherAssigner>& assignments,
               uint32_t& unitRowIndex,
@@ -843,7 +831,7 @@ bool school::findSuitableUnit(std::vector<teacher>& teachers,
   return false;
 }
 
-uint32_t school::scheduleTimeTable()
+uint32_t School::scheduleTimeTable()
 {
   // Copy local copies of input data as read on
   std::vector<teacher> teachers = teachers_;
@@ -855,7 +843,7 @@ uint32_t school::scheduleTimeTable()
 
   logger_.appendLog(M_INFO,
                     M_LOG_ENABLED,
-                    (std::string)"LOG.12: school.cpp school::scheduleTimeTable()");
+                    (std::string)"LOG.12: School.cpp School::scheduleTimeTable()");
 
   // Main algorithm loop
   // For first test run loop will be disabled and only one run will be performed
@@ -971,38 +959,32 @@ uint32_t school::scheduleTimeTable()
 
     logger_.appendLog(M_INFO,
                       M_LOG_ENABLED,
-                      (std::string)"LOG.12: school.cpp school::scheduleTimeTable()" +
+                      (std::string)"LOG.12: School.cpp School::scheduleTimeTable()" +
                       logMessage.str());
 
-    // Debug logic to allow 2 try and break loop
-    //if (failedScheduled > 0)
-    //{
-    //  break;
-    //}
   }
 
-  scheduledDepartmentsCounter = scheduledDepartments;
+  counters_.scheduledDepartments = scheduledDepartments;
+  counters_.schedulingFails = failedScheduled;
 
   // Log summary report
   std::stringstream logMessage;
   logMessage << std::endl << "------------------ Summary report: ------------------" << std::endl <<
-    "Read teachers: " << teachersCounter << std::endl <<
-      "Read departments: " << departmentsCounter << std::endl <<
-        "Read assignments: " << assignmentsCounter << std::endl <<
-          "Scheduled departments: " << scheduledDepartmentsCounter << std::endl <<
-            "Failed scheduling: " << failedScheduled;
-
-  failedScheduledCounter = failedScheduled;
+    "Read teachers: " << counters_.teachers << std::endl <<
+      "Read departments: " << counters_.departments << std::endl <<
+        "Read assignments: " << counters_.assignments << std::endl <<
+          "Scheduled departments: " << counters_.scheduledDepartments << std::endl <<
+            "Failed scheduling: " << counters_.schedulingFails;
 
   logger_.appendLog(M_INFO,
                     M_LOG_ENABLED,
-                    (std::string)"LOG.13: school.cpp school::scheduleTimeTable()" +
+                    (std::string)"LOG.13: School.cpp School::scheduleTimeTable()" +
                     logMessage.str());
 
-  return scheduledDepartments;
+  return counters_.scheduledDepartments;
 }
 
-void school::formatTimePlan(OpenXLSX::XLDocument& timePlanFile,
+void School::formatTimePlan(OpenXLSX::XLDocument& timePlanFile,
                             const char startLetter,
                             const int startRow,
                             std::string headerText)
@@ -1114,7 +1096,7 @@ void school::formatTimePlan(OpenXLSX::XLDocument& timePlanFile,
 
 }
 
-int school::writeScheduledTimePlan()
+int School::writeScheduledTimePlan()
 {
 
   // Get worksheet from doc
@@ -1150,7 +1132,7 @@ int school::writeScheduledTimePlan()
   return 1;
 }
 
-int school::writeSchedulingInfo(OpenXLSX::XLDocument& timePlanFile)
+int School::writeSchedulingInfo(OpenXLSX::XLDocument& timePlanFile)
 {
   OpenXLSX::XLWorksheet wks = timePlanFile.workbook().worksheet(1);
 
@@ -1221,20 +1203,20 @@ int school::writeSchedulingInfo(OpenXLSX::XLDocument& timePlanFile)
   // Message cell 1
   std::string messageCell1Addr = "H3";
   std::stringstream messageCell1;
-  messageCell1 << "Odczytana z pliku ilość nauczycieli: " << teachersCounter << std::endl <<
-    "Odczytana z pliku ilość klas: " << departmentsCounter << std::endl;
+  messageCell1 << "Odczytana z pliku ilość nauczycieli: " << counters_.teachers << std::endl <<
+    "Odczytana z pliku ilość klas: " << counters_.departments << std::endl;
   wks.cell(messageCell1Addr) = messageCell1.str();
 
   // Message cell 2
   std::string messageCell2Addr = "H4";
   std::stringstream messageCell2;
-  messageCell2 << "Odczytana z pliku ilość przypisań klas do nauczycieli: " << assignmentsCounter << std::endl <<
-      "Ilość rozplanowanych klas: " << scheduledDepartmentsCounter << std::endl;
+  messageCell2 << "Odczytana z pliku ilość przypisań klas do nauczycieli: " << counters_.assignments << std::endl <<
+      "Ilość rozplanowanych klas: " << counters_.scheduledDepartments << std::endl;
   wks.cell(messageCell2Addr) = messageCell2.str();
 
   // Fault cell 1
   std::string faultsCell1Addr = "H5";
-  if (failedScheduledCounter > 0)
+  if (counters_.schedulingFails > 0)
   {
     wks.cell(faultsCell1Addr) = schedulingFaults.str();
   }
@@ -1242,7 +1224,7 @@ int school::writeSchedulingInfo(OpenXLSX::XLDocument& timePlanFile)
   return 1;
 }
 
-int school::writeScheduledTeacherPlan()
+int School::writeScheduledTeacherPlan()
 {
   constexpr int teacherPlanOffset = 14;
 

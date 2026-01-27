@@ -11,13 +11,25 @@
 #include "teacherassigner.h"
 #include "scheduledunit.h"
 
-class school
+/**
+ * @brief Main class responsible for scheduling the school timetable.
+ *
+ * School orchestrates the entire scheduling process, from reading input data
+ * to generating formatted XLSX output files.
+ *
+ * Responsibilities:
+ * - Reading XLSX files and preparing input data
+ * - Scheduling the timetable
+ * - Creating and formatting XLSX output files
+ * - Writing scheduled timetables and teacher plans
+ */
+class School
 {
 
   public:
 
-    school(ProgramSettings& programSettings, Logging& logger);
-    ~school();
+    School(ProgramSettings& programSettings, Logging& logger);
+    ~School();
     void prepareInputDataFile();
     void prepareOutputDataFiles();
     int readTeachersAvailability();
@@ -49,6 +61,17 @@ class school
     int writeScheduledTeacherPlan();
 
   private:
+    struct Counters
+    {
+      uint32_t teachers = 0;
+      uint32_t departments = 0;
+      uint32_t assignments = 0;
+      uint32_t scheduledDepartments = 0;
+      uint32_t schedulingFails = 0;
+
+      void reset() { *this = {}; }
+    };
+
     ProgramSettings& programSettings_;
     Logging& logger_;
     OpenXLSX::XLDocument inputFile_;
@@ -64,13 +87,10 @@ class school
 
     std::array<std::array<ScheduledUnit, programConfig::maxNoOfAvailableDays>, 
       programConfig::maxNoOfAvailableUnits> scheduledTimeplan_;
-    
+
+    Counters counters_;
+
     std::stringstream schedulingFaults;
 
-    uint32_t teachersCounter;
-    uint32_t departmentsCounter;
-    uint32_t assignmentsCounter;
-    uint32_t scheduledDepartmentsCounter;
-    uint32_t failedScheduledCounter;
 };
 

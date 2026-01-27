@@ -23,27 +23,27 @@ int main()
                    " isLogModeOn=" + to_string(progamSettings.isLogModeOn()) +
                    " logFilePath=" + progamSettings.getLogFilePath());
 
-  //school instance creation
-  school schoolInstance(progamSettings, logger);
+  //School instance creation
+  School SchoolInstance(progamSettings, logger);
 
   // Sequence TODO: More professional sequence in state machine
-  schoolInstance.readTeachersAvailability();
+  SchoolInstance.readTeachersAvailability();
 
-  schoolInstance.showTeachersAvailability();
+  SchoolInstance.showTeachersAvailability();
 
-  schoolInstance.readDepartmentsAvailability();
+  SchoolInstance.readDepartmentsAvailability();
 
-  schoolInstance.showDepartmentsAvailability();
+  SchoolInstance.showDepartmentsAvailability();
 
-  schoolInstance.readTeachersAssignment();
+  SchoolInstance.readTeachersAssignment();
 
-  schoolInstance.showTeachersAssignment();
+  SchoolInstance.showTeachersAssignment();
   
-  schoolInstance.scheduleTimeTable();
+  SchoolInstance.scheduleTimeTable();
 
-  schoolInstance.writeScheduledTimePlan();
+  SchoolInstance.writeScheduledTimePlan();
 
-  schoolInstance.writeScheduledTeacherPlan();
+  SchoolInstance.writeScheduledTeacherPlan();
 
   return 0;
 }
