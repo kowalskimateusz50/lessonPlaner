@@ -46,22 +46,6 @@ std::string department::stateToString(department::State state)
   return "Unknown";
 }
 
-std::string department::stateToStringUI(department::State state)
-{
-  switch (state)
-  {
-    case department::State::Idle: return "Bezczynny";
-    case department::State::ScheduleCombinedUnits: return "Rozplanuj łączoną jednostkę";
-    case department::State::ScheduledCombinedUnits: return "Rozplanowano łączoną jednostkę";
-    case department::State::ScheduleSingleUnit: return "Rozplanuj pojedyńczą jednostkę";
-    case department::State::ScheduledSingleUnit: return "Rozplanowano pojedynczą jednostkę";
-    case department::State::Scheduled: return "Rozplanowano";
-    case department::State::NotProperlyAssigned: return "Nie poprawnie przypisany";
-    case department::State::SchedulingImpossible: return "Nie możliwy do rozplanowania";
-  }
-  return "Nieznany";
-}
-
 void department::setScheduledCol(uint32_t col)
 {
   scheduledCol_ = col;
@@ -77,3 +61,23 @@ bool department::isNotScheduledAtThisCol(uint32_t col)
   return false;
 }
 
+void department::setError(department::Error error)
+{
+  error_ = error;
+}
+department::Error department::getError()
+{
+  return error_;
+}
+
+std::string department::errorToString(department::Error error)
+{
+  switch (error)
+  {
+    case department::Error::None: return "Brak błędu";
+    case department::Error::ScheduleCombinedUnits: return "Nie można rozplanować podwójnej jednostki";
+    case department::Error::ScheduleSingleUnit: return "Nie można rozplanować pojedyńczej jednostki";
+    case department::Error::NotProperlyAssigned: return "Nie można znaleźć przypisania do klasy";
+  }
+  return "Nieznany";
+}

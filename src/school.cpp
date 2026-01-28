@@ -428,6 +428,7 @@ bool School::findSuitableUnit(std::vector<teacher>& teachers,
   if (assignmentIndex == std::numeric_limits<uint32_t>::max())
   {
     department.setState(department::State::NotProperlyAssigned);
+    department.setError(department::Error::NotProperlyAssigned);
     return false;
   }
 
@@ -463,13 +464,6 @@ bool School::findSuitableUnit(std::vector<teacher>& teachers,
       {
         for (uint32_t uCol = 0; uCol < departmentAvailability[uRow].size(); uCol++)
         {
-          // Debug: scheduling logic: Supress if not used
-          //std::string departmentToDebug = "1TRM";
-          //if (departmentName == departmentToDebug)
-          //{
-          //  std::cout << "Department debug: " << departmentToDebug;
-          //}
-
           // Verify whether actual unit and unit underneath him is not full and has no already
           // scheduled this department
           if ((scheduledTimeplan_[uRow][uCol].isScheduled()) && 
@@ -518,6 +512,7 @@ bool School::findSuitableUnit(std::vector<teacher>& teachers,
                 }
                 // Assign next state of scheduling 
                 department.setState(department::State::ScheduledCombinedUnits);
+                department.setError(department::Error::None);
                 return true;
               }
             }
@@ -530,12 +525,6 @@ bool School::findSuitableUnit(std::vector<teacher>& teachers,
       {
         for (uint32_t uCol = 0; uCol < departmentAvailability[uRow].size(); uCol++)
         {
-          // Debug: scheduling logic: Supress if not used
-          //std::string departmentToDebug = "1TRM";
-          //if (departmentName == departmentToDebug)
-          //{
-          //  std::cout << "Department debug: " << departmentToDebug;
-          //}
 
           // Verify whether actual unit and unit underneath him is not full and has no already
           // scheduled this department
@@ -585,6 +574,7 @@ bool School::findSuitableUnit(std::vector<teacher>& teachers,
                 }
                 // Assign next state of scheduling
                 department.setState(department::State::ScheduledCombinedUnits);
+                department.setError(department::Error::None);
                 return true;
               }
             }
@@ -597,13 +587,6 @@ bool School::findSuitableUnit(std::vector<teacher>& teachers,
       {
         for (uint32_t uCol = 0; uCol < departmentAvailability[uRow].size(); uCol++)
         {
-          // Debug: scheduling logic: Supress if not used
-          //std::string departmentToDebug = "1TRM";
-          //if (departmentName == departmentToDebug)
-          //{
-          //  std::cout << "Department debug: " << departmentToDebug;
-          //}
-
           // Verify whether actual unit and unit underneath him is not full and has no already
           // scheduled this department
           if (!(scheduledTimeplan_[uRow][uCol].isFull(noOfAssignedTeachers)) &&
@@ -648,13 +631,15 @@ bool School::findSuitableUnit(std::vector<teacher>& teachers,
                     }
                   }
                 }
-                // Assign next state of scheduling 
+                // Assign next state of scheduling
                 department.setState(department::State::ScheduledCombinedUnits);
+                department.setError(department::Error::None);
                 return true;
               }
               else
               {
                 department.setState(department::State::SchedulingImpossible);
+                department.setError(department::Error::ScheduleCombinedUnits);
                 return false;
               }
             }
@@ -713,6 +698,7 @@ bool School::findSuitableUnit(std::vector<teacher>& teachers,
                 }
                 // Assign next state of scheduling 
                 department.setState(department::State::ScheduledSingleUnit);
+                department.setError(department::Error::None);
                 return true;
               }
             }
@@ -762,8 +748,9 @@ bool School::findSuitableUnit(std::vector<teacher>& teachers,
                     }
                   }
                 }
-                // Assign next state of scheduling 
+                // Assign next state of scheduling
                 department.setState(department::State::ScheduledSingleUnit);
+                department.setError(department::Error::None);
                 return true;
               }
             }
@@ -814,11 +801,13 @@ bool School::findSuitableUnit(std::vector<teacher>& teachers,
                 }
                 // Assign next state of scheduling 
                 department.setState(department::State::ScheduledSingleUnit);
+                department.setError(department::Error::None);
                 return true;
               }
               else
               {
                 department.setState(department::State::SchedulingImpossible);
+                department.setError(department::Error::ScheduleSingleUnit);
                 return false;
               }
             }
@@ -877,14 +866,6 @@ uint32_t School::scheduleTimeTable()
         if (departments[indexOfDepartmentToSchedule].getState() == 
               department::State::ScheduledCombinedUnits)
         {
-          /* Debug: if, comment if not used
-          if  (departments[indexOfDepartmentToSchedule].getName() == "3BSc")
-          {
-            std::cout << "Debug: Scheduling of department: " << 
-              departments[indexOfDepartmentToSchedule].getName();
-          }
-          */
-
           // Schedule 1st unit
           scheduledTimeplan_[rowOfSuitableUnit][colOfSuitableUnit].scheduleUnit(
             assignments_[assignmentIndex].getAssignment());
@@ -937,11 +918,11 @@ uint32_t School::scheduleTimeTable()
               departments[indexOfDepartmentToSchedule].getState());
         departments[indexOfDepartmentToSchedule].setState(department::State::SchedulingImpossible);
         failedScheduled++;
-        // UI logging
-        schedulingFaults << "Nie można rozplanować klasy: " << 
-          departments[indexOfDepartmentToSchedule].getName() << std::endl <<
-            "Stan planowania: " << departments[indexOfDepartmentToSchedule].stateToStringUI(
-              departments[indexOfDepartmentToSchedule].getState()) << std::endl;
+        // UI error logging
+        schedulingFaults << "Błąd planowania klasy: " << 
+          departments[indexOfDepartmentToSchedule].getName() << " : " <<
+            departments[indexOfDepartmentToSchedule].errorToString(
+              departments[indexOfDepartmentToSchedule].getError()) << std::endl;
       }
 
     }
