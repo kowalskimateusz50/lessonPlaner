@@ -16,8 +16,8 @@ int main()
                  progamSettings.isLogToFileOn(),
                  progamSettings.getLogFilePath());
 
-  logger.appendLog(M_INFO,
-                   M_LOG_ENABLED,
+  logger.appendLog(Logging::LogLevel::Info,
+                   Logging::LogMode::Enabled,
                    (std::string)"LOG.1: main.cpp progamSettings.readProgramSettings()" +
                    " logFilePath=" + progamSettings.getLogFilePath() +
                    " isLogModeOn=" + to_string(progamSettings.isLogModeOn()) +

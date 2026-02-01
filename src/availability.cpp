@@ -10,8 +10,8 @@ int Availability::readAvailability()
   //Try to find initials
   if (!findAndCheckInitials())
   {
-    logger_.appendLog(M_ERROR,
-                      M_LOG_ENABLED,
+    logger_.appendLog(Logging::LogLevel::Error,
+                      Logging::LogMode::Enabled,
                       (std::string)"LOG.3: availability.cpp Availability::readAvailability() " +
                       "Initials wasn't found");
     return 0;
@@ -23,8 +23,8 @@ int Availability::readAvailability()
   //Read availability matrix
   if (!readAvailabilityMatrix())
   {
-    logger_.appendLog(M_ERROR,
-                      M_LOG_ENABLED,
+    logger_.appendLog(Logging::LogLevel::Error,
+                      Logging::LogMode::Enabled,
                       (std::string)"LOG.4: availability.cpp Availability::readAvailability() " +
                       "Availability matrix read failed");
     return 0;
@@ -34,8 +34,8 @@ int Availability::readAvailability()
   //Increment initials read row pointer
   initialsRowPointer_ += availabilitySettings_.availabilityMatrixRowOffset;
 
-  logger_.appendLog(M_INFO,
-                    M_LOG_ENABLED,
+  logger_.appendLog(Logging::LogLevel::Info,
+                    Logging::LogMode::Enabled,
                     (std::string)"LOG.5: availability.cpp Availability::readAvailability() " +
                     logMessage.str());
   return 1;
@@ -52,8 +52,8 @@ int Availability::findAndCheckInitials()
     initials_ = tempInitials;
     std::stringstream logMessage;
     logMessage << "Found initials:" << initials_ << std::endl;
-    logger_.appendLog(M_INFO,
-                      M_LOG_ENABLED,
+    logger_.appendLog(Logging::LogLevel::Info,
+                      Logging::LogMode::Enabled,
                       (std::string)"LOG.6: availability.cpp Availability::findAndCheckInitials() " +
                       logMessage.str());
     return 1;
@@ -98,8 +98,8 @@ void Availability::showAvailability()
       }
       logMessage << std::endl;
   }
-  logger_.appendLog(M_INFO,
-                  M_LOG_ENABLED,
+  logger_.appendLog(Logging::LogLevel::Info,
+                  Logging::LogMode::Enabled,
                   (std::string)"LOG.7: availability.cpp Availability::showAvailability() " +
                   logMessage.str());
 }

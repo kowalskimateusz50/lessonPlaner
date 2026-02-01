@@ -109,8 +109,8 @@ int School::readTeachersAvailability()
 
   logMessage << "\nStopped searching teachers, found: " << counters_.teachers << " teachers" << endl;
 
-  logger_.appendLog(M_INFO,
-                    M_LOG_ENABLED, 
+  logger_.appendLog(Logging::LogLevel::Info,
+                    Logging::LogMode::Enabled, 
                     (std::string)"LOG.2: School.cpp School::readTeachersAvailability()" +
                     logMessage.str());
 
@@ -156,8 +156,8 @@ int School::readDepartmentsAvailability()
   }
   logMessage << "\nStopped searching departments: " << counters_.departments << endl;
 
-  logger_.appendLog(M_INFO,
-                    M_LOG_ENABLED,
+  logger_.appendLog(Logging::LogLevel::Info,
+                    Logging::LogMode::Enabled,
                     (std::string)"LOG.8: School.cpp School::readDepartmentsAvailability()" +
                     logMessage.str());
 
@@ -206,14 +206,14 @@ int School::readTeachersAssignment()
 
     assignments_.push_back(readTeacherAssignment);
 
-    logger_.appendLog(M_INFO,
-                      M_LOG_ENABLED,
+    logger_.appendLog(Logging::LogLevel::Info,
+                      Logging::LogMode::Enabled,
                       (string)"LOG.9: School.cpp School::readTeachersAssignment()" +
                       logMessage.str());
   }
 
-  logger_.appendLog(M_INFO,
-                    M_LOG_ENABLED,
+  logger_.appendLog(Logging::LogLevel::Info,
+                    Logging::LogMode::Enabled,
                     (string)"LOG.10: School.cpp School::readTeachersAssignment()" +
                     (string)"Teacher assignment wasn't, stop finding");
 
@@ -233,8 +233,8 @@ void School::showTeachersAssignment()
       logMessage << "Assigned teacher: " << teacher << endl;
     }
   }
-  logger_.appendLog(M_INFO,
-                    M_LOG_ENABLED,
+  logger_.appendLog(Logging::LogLevel::Info,
+                    Logging::LogMode::Enabled,
                     (string)"LOG.11: School.cpp School::showTeachersAssignment()" +
                     logMessage.str());
 }
@@ -824,8 +824,8 @@ uint32_t School::scheduleTimeTable()
   uint32_t scheduledDepartments = 0;
   uint32_t failedScheduled = 0;
 
-  logger_.appendLog(M_INFO,
-                    M_LOG_ENABLED,
+  logger_.appendLog(Logging::LogLevel::Info,
+                    Logging::LogMode::Enabled,
                     (std::string)"LOG.12: School.cpp School::scheduleTimeTable()");
 
   // Main algorithm loop
@@ -932,8 +932,8 @@ uint32_t School::scheduleTimeTable()
       schedulingFaults << "Nie zostala znaleziona klasa do rozplanowania: " << std::endl;
     }
 
-    logger_.appendLog(M_INFO,
-                      M_LOG_ENABLED,
+    logger_.appendLog(Logging::LogLevel::Info,
+                      Logging::LogMode::Enabled,
                       (std::string)"LOG.12: School.cpp School::scheduleTimeTable()" +
                       logMessage.str());
 
@@ -951,8 +951,8 @@ uint32_t School::scheduleTimeTable()
           "Scheduled departments: " << counters_.scheduledDepartments << std::endl <<
             "Failed scheduling: " << counters_.schedulingFails;
 
-  logger_.appendLog(M_INFO,
-                    M_LOG_ENABLED,
+  logger_.appendLog(Logging::LogLevel::Info,
+                    Logging::LogMode::Enabled,
                     (std::string)"LOG.13: School.cpp School::scheduleTimeTable()" +
                     logMessage.str());
 

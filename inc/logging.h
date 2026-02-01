@@ -8,33 +8,47 @@
 #include <ctime>
 #include <filesystem>
 
-/* Define types of messages */
-#define M_INFO 1
-#define M_WARNING 2
-#define M_ERROR 3
-
-#define M_LOG_ENABLED true
-#define M_LOG_DISABLED false
-
 /**
- * @brief 
- * 
+ * @brief Class responsible for application logging.
+ *
+ * This class provide a centralized interface to logging diagnostic data to file
+ * with different severity levels.
+ *
+ * Responsibilities:
+ * - Opening and writing to log output file.
+ * - Controlling 
+ *
  */
 class Logging
 {
 	public:
+
+    enum class LogLevel
+    {
+      Idle,
+      Info,
+      Warning,
+      Error
+    };
+
+    enum class LogMode
+    {
+      Disabled,
+      Enabled
+    };
+
     /**
     * @brief Construct a new Logging object
-    * 
+    *
     * @param isLogModeOn 
     * @param isLogToConsoleOn 
     * @param isLogToFileOn 
     * @param logFolderPath 
     */
     Logging(bool isLogModeOn,
-                      bool isLogToConsoleOn,
-                      bool isLogToFileOn,
-                      std::string logFolderPath);
+            bool isLogToConsoleOn,
+            bool isLogToFileOn,
+            std::string logFolderPath);
     /**
      * @brief 
      * 
@@ -42,7 +56,8 @@ class Logging
      * @param isLogEnabled 
      * @param logMessage 
      */
-    void appendLog(int logType, int isLogEnabled, std::string logMessage);
+    ~Logging();
+    void appendLog(LogLevel logLevel, LogMode logMode, std::string logMessage);
 
 	private:
 		std::mutex mLock_;
@@ -61,5 +76,5 @@ class Logging
 		std::fstream logFile;
 
 		std::string addLeadingZero(int number);
-		std::string getMessageType(int type);
+	  std::string getLogLevelType(LogLevel logLevel);
 };
