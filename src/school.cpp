@@ -636,16 +636,13 @@ bool School::findSuitableUnit(std::vector<teacher>& teachers,
                 department.setError(department::Error::None);
                 return true;
               }
-              else
-              {
-                department.setState(department::State::SchedulingImpossible);
-                department.setError(department::Error::ScheduleCombinedUnits);
-                return false;
-              }
             }
           }
         }
       }
+      department.setState(department::State::SchedulingImpossible);
+      department.setError(department::Error::ScheduleCombinedUnits);
+      return false;
     }
 
     //Scheduling of single unit
@@ -804,16 +801,13 @@ bool School::findSuitableUnit(std::vector<teacher>& teachers,
                 department.setError(department::Error::None);
                 return true;
               }
-              else
-              {
-                department.setState(department::State::SchedulingImpossible);
-                department.setError(department::Error::ScheduleSingleUnit);
-                return false;
-              }
             }
           }
         }
       }
+      department.setState(department::State::SchedulingImpossible);
+      department.setError(department::Error::ScheduleSingleUnit);
+      return false;
     }
   }
 

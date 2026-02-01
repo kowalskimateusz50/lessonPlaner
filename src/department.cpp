@@ -65,6 +65,7 @@ void department::setError(department::Error error)
 {
   error_ = error;
 }
+
 department::Error department::getError()
 {
   return error_;
