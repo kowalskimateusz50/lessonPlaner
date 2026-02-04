@@ -18,7 +18,7 @@
  * - Handling of department scheduling errors
  * - Provide data needed for scheduling process
  */
-class department  : public Availability
+class department : public Availability
 {
   public:
 
@@ -52,7 +52,7 @@ class department  : public Availability
 
     /**
      * @brief Construct a new department object
-     * 
+     *
      * @param[in] wks OpenXLSX::XLWorksheet object using to read an availability from XLSX file
      * @param[in, out] initialsRowPointer Row pointer using to for matrixes reading
      * @param[in, out] logger Instace of logger object using for logging

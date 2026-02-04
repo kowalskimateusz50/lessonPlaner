@@ -14,27 +14,41 @@ Logging::Logging(bool isLogModeOn,
 	logFolderPath_ = logFolderPath;
 
 	/* Create new local folder if doesn't exist */
-  if (fs::create_directories(logFolderPath_))
+  fs::path filePathObj(logFolderPath_);
+  fs::path directory = filePathObj.parent_path();
+  // Create folder if doesn't exists
+  if (!directory.empty() && !fs::exists(directory))
   {
-    std::cout << "Folder for log files created." << std::endl;
-  }
-  else
-  {
-    std::cout << "Log file folder already exist." << std::endl;
+    try
+    {
+        fs::create_directories(directory);
+        std::cout << "Created directory: "<< directory << '\n';
+    }
+    catch (const fs::filesystem_error& e)
+    {
+        std::cerr << "Directory creation failed: "
+                  << e.what() << '\n';
+        return;
+    }
   }
 
-  tTime = time(0);
-	localTime = localtime(&tTime);
+  /* Initialize time */
+  std::time_t now = std::time(nullptr);
+  localtime_r(&now, &localTime_);
 
   /* Prepare date for filename creation */
-  logFileName = std::to_string(1900 + localTime->tm_year) + addLeadingZero(localTime->tm_mon) + 
-  std::to_string(localTime->tm_mday);
-  logFilePath = (logFolderPath_ + logFileName + ".txt");
+  logFileName =
+    std::to_string(1900 + localTime_.tm_year) +
+      addLeadingZero(localTime_.tm_mon + 1) +
+        addLeadingZero(localTime_.tm_mday);
 
-  /* File opening */
-  logFile.open(logFilePath, std::ios_base::app);
+  logFilePath = logFolderPath_ + "/" + logFileName + ".txt";
 
-  std::cout << "Log file opened." << std::endl;
+  logFile.open(logFilePath, std::ios::app);
+  if (!logFile)
+  {
+      throw std::runtime_error("Failed to open log file");
+  }
 }
 
 Logging::~Logging()
@@ -47,10 +61,10 @@ void Logging::appendLog(LogLevel logLevel, LogMode logMode, std::string logMessa
 {
   if (isLogModeOn_ && (logMode == LogMode::Enabled))
   {
-    std::string message = getLogLevelType(logLevel) + "[" + std::to_string(localTime->tm_mday) + 
-      "/" + addLeadingZero(localTime->tm_mon) + "/" + std::to_string(1900 + localTime->tm_year) + 
-        " " + addLeadingZero(localTime->tm_hour) + ":" + addLeadingZero(localTime->tm_min) + ":" +
-          addLeadingZero(localTime->tm_sec) + "]" + ": " + logMessage + "\n";
+    std::string message = getLogLevelType(logLevel) + "[" + std::to_string(localTime_.tm_mday) + 
+      "/" + addLeadingZero(localTime_.tm_mon) + "/" + std::to_string(1900 + localTime_.tm_year) + 
+        " " + addLeadingZero(localTime_.tm_hour) + ":" + addLeadingZero(localTime_.tm_min) + ":" +
+          addLeadingZero(localTime_.tm_sec) + "]" + ": " + logMessage + "\n";
 
     std::lock_guard<std::mutex> lock(mLock_);
 

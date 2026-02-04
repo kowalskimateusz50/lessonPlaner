@@ -15,34 +15,42 @@
  * with different severity levels.
  *
  * Responsibilities:
- * - Opening and writing to log output file.
- * - Controlling 
- *
+ * - Creating and writing to log output file named by actual date
+ * - Providing logging function with possible to define severity level
+ * 
  */
 class Logging
 {
 	public:
 
+    /**
+     * @brief Enum class to represent logging level
+     *
+     */
     enum class LogLevel
     {
-      Idle,
-      Info,
-      Warning,
-      Error
+      Idle,                           ///< Idle log level (not used)
+      Info,                           ///< Information log level
+      Warning,                        ///< Warning log level
+      Error                           ///< Error log level
     };
 
+    /**
+     * @brief Enum class to represent visibility modes in logs.
+     * 
+     */
     enum class LogMode
     {
-      Disabled,
-      Enabled
+      Disabled,                       ///< Log will not be printed
+      Enabled                         ///< Log will be printed
     };
 
     /**
     * @brief Construct a new Logging object
     *
-    * @param isLogModeOn 
-    * @param isLogToConsoleOn 
-    * @param isLogToFileOn 
+    * @param[in] isLogModeOn          ///< Setting up logging
+    * @param isLogToConsoleOn         ///< Setting up logging to console
+    * @param isLogToFileOn            ///< Setting up logging to file
     * @param logFolderPath 
     */
     Logging(bool isLogModeOn,
@@ -50,31 +58,30 @@ class Logging
             bool isLogToFileOn,
             std::string logFolderPath);
     /**
-     * @brief 
-     * 
-     * @param logType 
-     * @param isLogEnabled 
-     * @param logMessage 
+     * @brief Destroy the Logging object
+     * Closing log file if was opened
      */
     ~Logging();
+
+    /**
+     * @brief Function to print log
+     * 
+     * @param logLevel              ///< Log severity level described in enum class LogLevel
+     * @param logMode               ///< Logging mode that controls log visibility
+     * @param logMessage            ///< Message to be printed
+     */
     void appendLog(LogLevel logLevel, LogMode logMode, std::string logMessage);
 
-	private:
-		std::mutex mLock_;
+private:
+    std::mutex mLock_;              ///< Mutex protecting concurrent access to the log output
+    std::tm localTime_{};           ///< Cached local system time used for log timestamps
 
-		time_t tTime;
-	  tm* localTime;
+    bool isLogModeOn_;              ///< Enables or disables logging globally
+    bool isLogToConsoleOn_;         ///< Enables logging output to the console
+    bool isLogToFileOn_;            ///< Enables logging output to a file
 
-    bool isLogModeOn_;
-    bool isLogToConsoleOn_;
-    bool isLogToFileOn_;
-		std::string logFolderPath_;
-
-	  std::string logFileName;
-		std::string logFilePath;
-
-		std::fstream logFile;
-
-		std::string addLeadingZero(int number);
-	  std::string getLogLevelType(LogLevel logLevel);
+    std::string logFolderPath_;     ///< Path to the directory containing log files
+    std::string logFileName_;       ///< Name of the log file
+    std::string logFilePath_;       ///< Full path to the log file
+    std::fstream logFile_;          ///< File stream used for log file output
 };

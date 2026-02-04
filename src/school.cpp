@@ -40,47 +40,45 @@ void School::prepareOutputDataFiles()
   fs::path filePathObj(timePlanFilePath);
   fs::path directory = filePathObj.parent_path();
 
-    // Create folder if doesn't exists
-    if (!directory.empty() && !fs::exists(directory))
-    {
-        try
-        {
-            fs::create_directories(directory);
-            std::cout << "Created directory: "<< directory << '\n';
-        }
-        catch (const fs::filesystem_error& e)
-        {
-            std::cerr << "Directory creation failed: "
-                      << e.what() << '\n';
-            return;
-        }
-    }
-
-    // Create and open time plan file
+  // Create folder if doesn't exists
+  if (!directory.empty() && !fs::exists(directory))
+  {
     try
     {
-      timePlanFile_.create(timePlanFilePath, OpenXLSX::XLForceOverwrite);   // Create new time plan file
-      timePlanFile_.open(timePlanFilePath);     // Open new time plan file path
-
+        fs::create_directories(directory);
+        std::cout << "Created directory: "<< directory << '\n';
     }
-    catch (const std::exception& e)
+    catch (const fs::filesystem_error& e)
     {
-        std::cerr << "Failed to create/open XLSX file: " << e.what() << '\n';
+        std::cerr << "Directory creation failed: "
+                  << e.what() << '\n';
         return;
     }
+  }
 
-    // Create and open teacher plan file
-    try
-    {
-      teacherPlanFile_.create(teacherPlanFilePath, OpenXLSX::XLForceOverwrite);   // Create new teacher plan file
-      teacherPlanFile_.open(teacherPlanFilePath);     // Open new teacher plan file path
-    }
-    catch (const std::exception& e)
-    {
+  // Create and open time plan file
+  try
+  {
+    timePlanFile_.create(timePlanFilePath, OpenXLSX::XLForceOverwrite);   // Create new time plan file
+    timePlanFile_.open(timePlanFilePath);     // Open new time plan file path
+  }
+  catch (const std::exception& e)
+  {
       std::cerr << "Failed to create/open XLSX file: " << e.what() << '\n';
       return;
-    }
+  }
 
+  // Create and open teacher plan file
+  try
+  {
+    teacherPlanFile_.create(teacherPlanFilePath, OpenXLSX::XLForceOverwrite);   // Create new teacher plan file
+    teacherPlanFile_.open(teacherPlanFilePath);     // Open new teacher plan file path
+  }
+  catch (const std::exception& e)
+  {
+    std::cerr << "Failed to create/open XLSX file: " << e.what() << '\n';
+    return;
+  }
 }
 
 /**
