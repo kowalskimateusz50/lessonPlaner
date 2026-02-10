@@ -73,6 +73,7 @@ class Logging
     void appendLog(LogLevel logLevel, LogMode logMode, std::string logMessage);
 
 private:
+
     std::mutex mLock_;              ///< Mutex protecting concurrent access to the log output
     std::tm localTime_{};           ///< Cached local system time used for log timestamps
 
@@ -84,4 +85,20 @@ private:
     std::string logFileName_;       ///< Name of the log file
     std::string logFilePath_;       ///< Full path to the log file
     std::fstream logFile_;          ///< File stream used for log file output
+
+    /**
+     * @brief Funtion to add 0 before number with one digit.
+     *
+     * @param[in] number number to which zero will be added
+     * @return std::string with added zero before digit
+     */
+    std::string addLeadingZero(int number);
+
+    /**
+     * @brief Get the Log Level Type object
+     *
+     * @param logLevel input log level
+     * @return std::string log level in string
+     */
+    std::string getLogLevelType(LogLevel logLevel);
 };

@@ -1223,7 +1223,7 @@ int School::writeScheduledTeacherPlan()
         if (scheduledTimeplan_[row][col].hasThisTeacher(teacherName))
         {
           teacherPlanWks_.cell(cell).value() = 
-            scheduledTimeplan_[row][col].getUnitWithAssignedTeacher(teacherName);
+            scheduledTimeplan_[row][col].getDepartmentWithAssignedTeacher(teacherName);
         }
         else
         {

@@ -10,7 +10,6 @@ ProgramSettings::ProgramSettings()
   timePlanFilePath_ = "";
   teacherPlanFilePath_ = "";
   logFilePath_ = "";
-
 }
 
 int ProgramSettings::readProgramSettings()

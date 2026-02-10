@@ -77,7 +77,7 @@ std::string ScheduledUnit::getUnit()
   return ssMessage.str();
 }
 
-std::string ScheduledUnit::getUnitWithAssignedTeacher(std::string teacher)
+std::string ScheduledUnit::getDepartmentWithAssignedTeacher(std::string teacher)
 {
   std::stringstream ssMessage;
   for (int i = 0; i < assignments_.size(); i++)

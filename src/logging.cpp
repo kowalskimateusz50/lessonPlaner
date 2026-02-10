@@ -37,15 +37,15 @@ Logging::Logging(bool isLogModeOn,
   localtime_r(&now, &localTime_);
 
   /* Prepare date for filename creation */
-  logFileName =
+  logFileName_ =
     std::to_string(1900 + localTime_.tm_year) +
       addLeadingZero(localTime_.tm_mon + 1) +
         addLeadingZero(localTime_.tm_mday);
 
-  logFilePath = logFolderPath_ + "/" + logFileName + ".txt";
+  logFilePath_ = logFolderPath_ + "/" + logFileName_+ ".txt";
 
-  logFile.open(logFilePath, std::ios::app);
-  if (!logFile)
+  logFile_.open(logFilePath_, std::ios::app);
+  if (!logFile_)
   {
       throw std::runtime_error("Failed to open log file");
   }
@@ -54,7 +54,7 @@ Logging::Logging(bool isLogModeOn,
 Logging::~Logging()
 {
   /* File closing */
-  logFile.close();
+  logFile_.close();
 }
 
 void Logging::appendLog(LogLevel logLevel, LogMode logMode, std::string logMessage)
@@ -75,7 +75,7 @@ void Logging::appendLog(LogLevel logLevel, LogMode logMode, std::string logMessa
     if (isLogToFileOn_)
     {
       /* Writing string to file */
-      logFile << message;
+      logFile_ << message;
     }
   }
 }

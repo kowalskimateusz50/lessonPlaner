@@ -40,7 +40,7 @@ class Availability
     };
     /**
      * @brief Construct a new Availability object
-     * 
+     *
      * @param[in] wks OpenXLSX::XLWorksheet object using to read an availability from XLSX file
      * @param[in, out] initialsRowPointer Row pointer using to for matrixes reading
      * @param[in, out] logger Instace of logger object using for logging
