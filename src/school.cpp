@@ -252,11 +252,11 @@ uint32_t School::countNotScheduledDepartments(std::vector<department>& departmen
 }
 
 uint32_t School::findLowestAvailableDepartment(std::vector<department>& departments,
-                                           std::vector<teacher>& teachers,
-                                           std::vector<TeacherAssigner>& assignments,
-                                           std::array<std::array<ScheduledUnit, 
-                                           programConfig::maxNoOfAvailableDays>, 
-                                           programConfig::maxNoOfAvailableUnits>& scheduledTimeplan)
+                                               std::vector<teacher>& teachers,
+                                               std::vector<TeacherAssigner>& assignments,
+                                               std::array<std::array<ScheduledUnit, 
+                                               programConfig::maxNoOfAvailableDays>, 
+                                               programConfig::maxNoOfAvailableUnits>& scheduledTimeplan)
 {
   // Set lowest value as max possible to schedule + 1
   uint32_t lowestAvailabilityUnits = static_cast<uint32_t>(programConfig::maxNoOfAvailableUnits *
@@ -402,6 +402,7 @@ uint32_t School::findLowestAvailableDepartment(std::vector<department>& departme
 
   return lowestAvailabilityIndex;
 }
+
 bool School::findSuitableUnit(std::vector<teacher>& teachers,
               department& department,
               std::vector<TeacherAssigner>& assignments,
