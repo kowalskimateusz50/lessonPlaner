@@ -18,14 +18,16 @@ TeacherAssigner::TeacherAssigner(OpenXLSX::XLWorksheet& wks,
 
 bool TeacherAssigner::readAssignment()
 {
-  OpenXLSX::XLCellAssignable cell = wks_.findCell(settings_.departmentColumn + std::to_string(rowPointer_));
+  OpenXLSX::XLCellAssignable cell = 
+    wks_.findCell(settings_.departmentColumn + std::to_string(rowPointer_));
   //Check whether there is no end of assignment table
   if (cell.empty())
   {
     return false;
   }
 
-  assignment_.department = wks_.cell(settings_.departmentColumn + std::to_string(rowPointer_)).value().get<std::string>();
+  assignment_.department = wks_.cell(
+    settings_.departmentColumn + std::to_string(rowPointer_)).value().get<std::string>();
   //Read teachers in the loop
   for (char i = settings_.asignedTeachersBeginCol; i <= settings_.asignedTeachersEndCol; i++)
   {

@@ -41,9 +41,9 @@ class Availability
     /**
      * @brief Construct a new Availability object
      *
-     * @param[in] wks OpenXLSX::XLWorksheet object using to read an availability from XLSX file
-     * @param[in, out] initialsRowPointer Row pointer using to for matrixes reading
-     * @param[in, out] logger Instace of logger object using for logging
+     * @param[in] wks Worksheet providing access to availability data stored in an XLSX file.
+     * @param[in,out] initialsRowPointer Current row index used during matrix parsing.
+     * @param[in,out] logger Logger instance for reporting processing details.
      */
     Availability(OpenXLSX::XLWorksheet& wks,
                  uint32_t& initialsRowPointer,

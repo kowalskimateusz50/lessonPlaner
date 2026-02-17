@@ -104,8 +104,8 @@ class ProgramSettings
 };
 
 /**
- * @brief Enum class is responsible for representing excel columns letters as numbers
- * 
+ * @brief Represents Excel column letters mapped to their numeric indices.
+ *
  */
 enum class wksColumns
 {

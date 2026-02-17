@@ -28,7 +28,7 @@ class department : public Availability
      */
     enum class State
     {
-      Idle, ///< State assigned always agfter object creation.
+      Idle, ///< State assigned always after object creation.
       ScheduleCombinedUnits, ///< Department has prepared data needed for 1st stage of scheduling
       ScheduledCombinedUnits, ///< 1st stage of scheduling done, combined unit was sheduled
       ScheduleSingleUnit, ///< Department is prepared for 2nd stage of scheduling
@@ -53,9 +53,9 @@ class department : public Availability
     /**
      * @brief Construct a new department object
      *
-     * @param[in] wks OpenXLSX::XLWorksheet object using to read an availability from XLSX file
-     * @param[in, out] initialsRowPointer Row pointer using to for matrixes reading
-     * @param[in, out] logger Instace of logger object using for logging
+     * @param[in] wks Worksheet providing access to availability data stored in an XLSX file.
+     * @param[in,out] initialsRowPointer Current row index used during matrix parsing.
+     * @param[in,out] logger Logger instance for reporting processing details.
      */
     department(OpenXLSX::XLWorksheet& wks,
                uint32_t& initialsRowPointer,
@@ -100,7 +100,7 @@ class department : public Availability
     std::string errorToString(Error error);
     /**
      * @brief Set the Scheduled Col object
-     * 
+     *
      * @param col
      */
     void setScheduledCol(uint32_t col);
