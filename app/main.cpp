@@ -1,49 +1,35 @@
-
-#include <iostream>
-#include "programsettings.h"
-#include "school.h"
-#include "logging.h"
+#include "lessonplanner.h"
 
 int main() 
 {
-  //Getting program settings
-  ProgramSettings progamSettings;
-  progamSettings.readProgramSettings();
+  // Get program settings
+  ProgramSettings programSettings;
+  if (programSettings.readProgramSettings() != 0)
+  {
+    return static_cast<int>(LessonPlanner::RuntimeErrors::ProgramSettingsLoad);
+  }
 
-  //Creating logging class instance and log settings
-  Logging logger(progamSettings.isLogModeOn(),
-                 progamSettings.isLogToConsoleOn(),
-                 progamSettings.isLogToFileOn(),
-                 progamSettings.getLogFilePath());
+  // Create logging class instance and log settings
+  Logging logger(programSettings.isLogModeOn(),
+                 programSettings.isLogToConsoleOn(),
+                 programSettings.isLogToFileOn(),
+                 programSettings.getLogFilePath());
 
   logger.appendLog(Logging::LogLevel::Info,
                    Logging::LogMode::Enabled,
-                   (std::string)"LOG.1: main.cpp progamSettings.readProgramSettings()" +
-                   " logFilePath=" + progamSettings.getLogFilePath() +
-                   " isLogModeOn=" + to_string(progamSettings.isLogModeOn()) +
-                   " logFilePath=" + progamSettings.getLogFilePath());
+                   (std::string)"LOG.1: lessonplanner.cpp programSettings.readProgramSettings()" +
+                   " logFilePath=" + programSettings.getLogFilePath() +
+                   " isLogModeOn=" + to_string(programSettings.isLogModeOn()) +
+                   " logFilePath=" + programSettings.getLogFilePath());
 
-  //School instance creation
-  School SchoolInstance(progamSettings, logger);
+  // School instance creation
+  School schoolInstance(programSettings, logger);
 
-  // Sequence TODO: More professional sequence in state machine
-  SchoolInstance.readTeachersAvailability();
+  // Create lessonPlanner with dependency injection
+  LessonPlanner lessonPlanner(schoolInstance);
 
-  SchoolInstance.showTeachersAvailability();
+  // Run program process
+  auto result = lessonPlanner.run();
 
-  SchoolInstance.readDepartmentsAvailability();
-
-  SchoolInstance.showDepartmentsAvailability();
-
-  SchoolInstance.readTeachersAssignment();
-
-  SchoolInstance.showTeachersAssignment();
-  
-  SchoolInstance.scheduleTimeTable();
-
-  SchoolInstance.writeScheduledTimePlan();
-
-  SchoolInstance.writeScheduledTeacherPlan();
-
-  return 0;
+  return static_cast<int>(result);
 }

@@ -118,4 +118,3 @@ class department : public Availability
     Error error_; ///< Current error of department scheduling process
     uint32_t scheduledCol_; ///< Column in which department has scheduled combined unit
 };
-

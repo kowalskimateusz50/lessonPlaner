@@ -90,17 +90,17 @@ class School
     void showTeachersAssignment();
 
     /**
+     * @brief Main timetable scheduling sequence
+     * @return uint32_t number of scheduled departments
+     */
+    uint32_t scheduleTimeTable();
+
+    /**
      * @brief count number of not scheduled departments, based on their states
      * @param[in] departments vector of departments
      * @return uint32_t number of not scheduled departments
      */
     uint32_t countNotScheduledDepartments(std::vector<department>& departments);
-
-    /**
-     * @brief Main timetable scheduling sequence
-     * @return uint32_t number of scheduled departments
-     */
-    uint32_t scheduleTimeTable();
 
     /**
      * @brief Find index of least available department

@@ -44,6 +44,13 @@ class ProgramSettings
      * @return int 1 if program settings have been read correctly, 0 otherwise
      */
     int readProgramSettings();
+
+    /**
+     * @brief Show read program settings
+     * 
+     */
+    void showProgramSettings();
+
     /**
      * @brief Check whether logging mode is enabled
      * 

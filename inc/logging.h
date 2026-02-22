@@ -49,9 +49,9 @@ class Logging
     * @brief Construct a new Logging object
     *
     * @param[in] isLogModeOn          ///< Setting up logging
-    * @param isLogToConsoleOn         ///< Setting up logging to console
-    * @param isLogToFileOn            ///< Setting up logging to file
-    * @param logFolderPath 
+    * @param[in] isLogToConsoleOn     ///< Setting up logging to console
+    * @param[in] isLogToFileOn        ///< Setting up logging to file
+    * @param[in] logFolderPath        ///< Setting up logging folder path
     */
     Logging(bool isLogModeOn,
             bool isLogToConsoleOn,
